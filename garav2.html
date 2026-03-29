@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contagiri & Cronometro Atletica</title>
+    <style>
+        :root {
+            --bg-color: #f4f4f9;
+            --primary-color: #3498db;
+            --danger-color: #e74c3c;
+            --success-color: #2ecc71;
+            --group-btn-color: #8e44ad; /* Viola per azione di gruppo */
+            --text-color: #333;
+            --panel-bg: #ffffff;
+            --timer-bg: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--panel-bg);
+            padding: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1rem;
+            text-align: center;
+            color: #7f8c8d;
+        }
+
+        .config-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            align-items: flex-end;
+            padding: 5px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 0.75rem;
+            margin-bottom: 2px;
+            font-weight: bold;
+        }
+
+        input, select {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        button {
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.2s;
+            color: white;
+            padding: 6px 12px;
+            font-size: 0.9rem;
+        }
+
+            button:hover {
+                opacity: 0.9;
+            }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+        }
+
+        .btn-edit {
+            background-color: #f39c12;
+            font-size: 0.8rem;
+            padding: 4px 8px;
+        }
+
+        .btn-group-action {
+            background-color: var(--group-btn-color);
+            margin-left: 10px;
+        }
+
+        /* Timer */
+        .timer-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 5px;
+            background: #eee;
+            padding: 5px;
+            border-radius: 8px;
+        }
+
+        #main-timer {
+            font-family: 'Courier New', monospace;
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--timer-bg);
+            background: white;
+            padding: 0 10px;
+            border-radius: 5px;
+            border: 2px solid #ccc;
+            min-width: 160px;
+            text-align: center;
+        }
+
+        .btn-start {
+            background-color: var(--success-color);
+            min-width: 80px;
+        }
+
+        .btn-stop {
+            background-color: var(--danger-color);
+            min-width: 80px;
+        }
+
+        /* --- Interfaccia Gara --- */
+        #race-interface {
+            display: none;
+            flex: 1;
+            display: flex;
+            height: calc(100vh - 150px);
+            overflow: hidden;
+        }
+
+        /* SX: Runners */
+        .runners-zone {
+            flex: 3;
+            padding: 10px;
+            background-color: #eef2f3;
+            overflow-y: auto;
+            border-right: 2px solid #ccc;
+        }
+
+        .runners-grid {
+            display: grid;
+            /* FIX 3: Caselle più piccole (min 100px invece di 130px) */
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 8px;
+        }
+
+        .runner-card {
+            background-color: white;
+            border: 2px solid var(--primary-color);
+            border-radius: 6px;
+            padding: 8px; /* Padding ridotto */
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+            .runner-card.disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                filter: grayscale(1);
+            }
+
+            .runner-card:active:not(.disabled) {
+                transform: scale(0.95);
+            }
+
+        .runner-number {
+            font-size: 1.8rem; /* Font ridotto */
+            font-weight: bold;
+            display: block;
+            line-height: 1;
+        }
+
+        .runner-laps {
+            font-size: 0.75rem; /* Testo info ridotto */
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .runner-card.last-lap {
+            background-color: var(--danger-color);
+            border-color: darkred;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+            .runner-card.last-lap .runner-laps {
+                color: #ffe;
+            }
+
+        .runner-card.finished {
+            display: none;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 8px rgba(231, 76, 60, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+            }
+        }
+
+        /* DX: Log */
+        .history-zone {
+            flex: 1;
+            min-width: 250px;
+            padding: 10px;
+            background-color: var(--panel-bg);
+            overflow-y: auto;
+            border-left: 1px solid #ddd;
+        }
+
+            .history-zone h2 {
+                margin-top: 0;
+                font-size: 1rem;
+                border-bottom: 2px solid #eee;
+                padding-bottom: 5px;
+            }
+
+        #log-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .log-entry {
+            padding: 6px 8px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .log-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .log-bib {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1rem;
+            width: 35px;
+        }
+
+        .log-time {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: var(--timer-bg);
+        }
+
+        .log-entry.log-last {
+            background-color: #fce4e4;
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .log-entry.log-finish {
+            background-color: #e8f8f5;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div id="setup-panel" class="config-panel">
+            <div class="input-group">
+                <label>Pettorali</label>
+                <input type="text" id="bibs" value="1, 2, 3, 4, 5, 6, 7, 8">
+            </div>
+            <div class="input-group">
+                <label>Distanza (m)</label>
+                <input type="number" id="distance" value="1500" step="100" style="width: 70px;">
+            </div>
+            <div class="input-group">
+                <label>Pista</label>
+                <select id="track-type">
+                    <option value="400">400m</option>
+                    <option value="200">200m</option>
+                </select>
+            </div>
+            <button class="btn-primary" onclick="initRace()">Crea</button>
+        </div>
+
+        <div id="active-race-header" class="hidden">
+            <div style="text-align: center; font-size: 0.85rem; margin-bottom: 4px;">
+                <span id="race-info"></span>
+                <button class="btn-edit" onclick="resetRace()">Reset</button>
+                <button class="btn-group-action" onclick="massLapUpdate()">Tutti -1 Giro</button>
+            </div>
+
+            <div class="timer-container">
+                <div id="main-timer">00:00.00</div>
+                <button id="btn-timer-toggle" class="btn-start" onclick="toggleTimer()">START</button>
+            </div>
+        </div>
+    </header>
+
+    <div id="race-interface" class="hidden">
+        <div class="runners-zone">
+            <div id="runners-grid" class="runners-grid"></div>
+        </div>
+        <div class="history-zone">
+            <h2>Storico Passaggi</h2>
+            <ul id="log-list"></ul>
+        </div>
+    </div>
+
+    <script>
+        let startTime = 0, elapsedTime = 0, timerInterval = null, isRunning = false;
+        let raceConfig = { runners: [], totalLaps: 0 };
+
+        function toggleTimer() {
+            const btn = document.getElementById('btn-timer-toggle');
+            if (!isRunning) {
+                isRunning = true;
+                startTime = Date.now() - elapsedTime;
+                timerInterval = setInterval(() => {
+                    elapsedTime = Date.now() - startTime;
+                    document.getElementById('main-timer').textContent = formatTime(elapsedTime);
+                }, 37);
+                btn.textContent = "STOP";
+                btn.className = "btn-stop";
+                document.querySelectorAll('.runner-card').forEach(c => c.classList.remove('disabled'));
+            } else {
+                isRunning = false;
+                clearInterval(timerInterval);
+                btn.textContent = "RIPRENDI";
+                btn.className = "btn-start";
+            }
+        }
+
+        function formatTime(ms) {
+            let totSec = Math.floor(ms / 1000);
+            let min = Math.floor(totSec / 60);
+            let sec = totSec % 60;
+            let cent = Math.floor((ms % 1000) / 10);
+            return `${min.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}.${cent.toString().padStart(2,'0')}`;
+        }
+
+        function initRace() {
+            const bibsInput = document.getElementById('bibs').value;
+            const distInput = parseInt(document.getElementById('distance').value);
+            const trackInput = parseInt(document.getElementById('track-type').value);
+
+            if (!bibsInput || !distInput) return alert("Dati mancanti!");
+
+            // FIX 1: Arrotondamento per difetto (Math.floor)
+            const calculatedLaps = Math.floor(distInput / trackInput);
+
+            if(calculatedLaps < 1) return alert("La distanza è troppo breve per un giro!");
+
+            raceConfig.totalLaps = calculatedLaps;
+            raceConfig.runners = bibsInput.split(',').map(s => s.trim()).filter(s => s !== "")
+                .map(bib => ({ id: bib, lapsDone: 0, finished: false }));
+
+            document.getElementById('race-info').innerHTML = `<b>${distInput}m</b> (${calculatedLaps} passaggi)`;
+            document.getElementById('setup-panel').classList.add('hidden');
+            document.getElementById('active-race-header').classList.remove('hidden');
+            document.getElementById('race-interface').classList.remove('hidden');
+            document.getElementById('race-interface').style.display = 'flex';
+
+            elapsedTime = 0; isRunning = false;
+            document.getElementById('main-timer').textContent = "00:00.00";
+            document.getElementById('btn-timer-toggle').textContent = "START";
+            document.getElementById('btn-timer-toggle').className = "btn-start";
+            document.getElementById('log-list').innerHTML = '';
+
+            renderRunners();
+        }
+
+        function resetRace() {
+            if(confirm("Vuoi resettare tutto?")) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                document.getElementById('setup-panel').classList.remove('hidden');
+                document.getElementById('active-race-header').classList.add('hidden');
+                document.getElementById('race-interface').classList.add('hidden');
+                document.getElementById('race-interface').style.display = 'none';
+            }
+        }
+
+        function renderRunners() {
+            const grid = document.getElementById('runners-grid');
+            grid.innerHTML = '';
+            raceConfig.runners.forEach(runner => {
+                if (runner.finished) return;
+
+                const btn = document.createElement('div');
+                btn.className = isRunning ? 'runner-card' : 'runner-card disabled';
+                const lapsRemaining = raceConfig.totalLaps - runner.lapsDone;
+
+                if (lapsRemaining === 1) btn.classList.add('last-lap');
+
+                btn.innerHTML = `
+                    <span class="runner-number">${runner.id}</span>
+                    <div class="runner-laps">
+                        <b>${lapsRemaining}</b> giri
+                    </div>
+                `;
+                btn.onclick = () => registerLap(runner.id);
+                grid.appendChild(btn);
+            });
+        }
+
+        // FIX 2: Funzione per scalare giri a tutti
+        function massLapUpdate() {
+            if(!isRunning) return alert("Avvia prima il cronometro!");
+            if(!confirm("Confermi di scalare 1 giro a TUTTI gli atleti attualmente in gara?")) return;
+
+            const currentTime = formatTime(elapsedTime);
+            let updatedCount = 0;
+
+            // Aggiorna lo stato di tutti i corridori attivi
+            raceConfig.runners.forEach(runner => {
+                if (!runner.finished) {
+                    processRunnerLap(runner, currentTime, true); // true = è un aggiornamento di gruppo
+                    updatedCount++;
+                }
+            });
+
+            if(updatedCount > 0) {
+                // Aggiunge una nota nel log per chiarezza
+                const li = document.createElement('li');
+                li.className = 'log-entry';
+                li.style.backgroundColor = '#f3e5f5'; // Violetto chiaro
+                li.innerHTML = `<i>Aggiornamento Gruppo (${updatedCount} atleti)</i> <span class="log-time">${currentTime}</span>`;
+                const list = document.getElementById('log-list');
+                list.insertBefore(li, list.firstChild);
+
+                renderRunners();
+            }
+        }
+
+        function registerLap(bibId) {
+            if (!isRunning) return;
+            const runner = raceConfig.runners.find(r => r.id === bibId);
+            if (!runner || runner.finished) return;
+
+            processRunnerLap(runner, formatTime(elapsedTime), false);
+            renderRunners();
+        }
+
+        function processRunnerLap(runner, timeString, isMassUpdate) {
+            runner.lapsDone++;
+            const lapsRemaining = raceConfig.totalLaps - runner.lapsDone;
+
+            let logType = 'normal';
+            if (lapsRemaining === 1) logType = 'last';
+            if (lapsRemaining <= 0) {
+                runner.finished = true;
+                logType = 'finish';
+            }
+
+            // Se è un aggiornamento di gruppo, non spammiamo il log con ogni singolo atleta,
+            // ma registriamo comunque se qualcuno finisce o va all'ultimo giro per chiarezza
+            if (!isMassUpdate || logType !== 'normal') {
+                addLogEntry(runner.id, runner.lapsDone, logType, timeString);
+            }
+        }
+
+        function addLogEntry(bib, lapNumber, type, timeString) {
+            const li = document.createElement('li');
+            li.className = 'log-entry';
+
+            let statusText = `- ${lapNumber}`;
+            if (type === 'last') {
+                li.classList.add('log-last');
+                statusText = "CAMPANA";
+            } else if (type === 'finish') {
+                li.classList.add('log-finish');
+                statusText = "ARRIVO";
+            }
+
+            li.innerHTML = `
+                <div class="log-left">
+                    <span class="log-bib">${bib}</span>
+                    <span style="font-size:0.8rem; color:#555;">${statusText}</span>
+                </div>
+                <span class="log-time">${timeString}</span>
+            `;
+            const list = document.getElementById('log-list');
+            list.insertBefore(li, list.firstChild);
+        }
+    </script>
+</body>
+</html>

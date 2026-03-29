@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contagiri & Cronometro Atletica</title>
+    <style>
+        :root {
+            --bg-color: #f4f4f9;
+            --primary-color: #3498db;
+            --danger-color: #e74c3c;
+            --success-color: #2ecc71;
+            --text-color: #333;
+            --panel-bg: #ffffff;
+            --timer-bg: #2c3e50;
+            --timer-text: #ecf0f1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Header & Configuration --- */
+        header {
+            background-color: var(--panel-bg);
+            padding: 0.5rem 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.2rem;
+            text-align: center;
+            color: #7f8c8d;
+        }
+
+        .config-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            align-items: flex-end;
+            padding: 10px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 0.8rem;
+            margin-bottom: 3px;
+            font-weight: bold;
+        }
+
+        input, select {
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        /* Buttons */
+        button {
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+
+            button:hover {
+                opacity: 0.9;
+            }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 15px;
+        }
+
+        .btn-edit {
+            background-color: #f39c12;
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+
+        /* Timer Styles */
+        .timer-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 5px;
+            background: #eee;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        #main-timer {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--timer-bg);
+            background: white;
+            padding: 0 15px;
+            border-radius: 5px;
+            border: 2px solid #ccc;
+        }
+
+        .btn-start {
+            background-color: var(--success-color);
+            color: white;
+            font-size: 1.2rem;
+            padding: 10px 25px;
+        }
+
+        .btn-stop {
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 1.2rem;
+            padding: 10px 25px;
+        }
+
+        /* --- Main Race Interface --- */
+        #race-interface {
+            display: none;
+            flex: 1;
+            display: flex;
+            height: calc(100vh - 200px);
+            overflow: hidden;
+        }
+
+        /* Left Zone: Runners Buttons */
+        .runners-zone {
+            flex: 2;
+            padding: 20px;
+            background-color: #eef2f3;
+            overflow-y: auto;
+            border-right: 2px solid #ccc;
+        }
+
+        .runners-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 15px;
+        }
+
+        .runner-card {
+            background-color: white;
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+            user-select: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+            /* Disabled state before start */
+            .runner-card.disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                filter: grayscale(1);
+            }
+
+            .runner-card:active:not(.disabled) {
+                transform: scale(0.95);
+            }
+
+        .runner-number {
+            font-size: 2.2rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .runner-laps {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* States */
+        .runner-card.last-lap {
+            background-color: var(--danger-color);
+            border-color: darkred;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+            .runner-card.last-lap .runner-laps {
+                color: #ffe;
+            }
+
+        .runner-card.finished {
+            display: none;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+            }
+        }
+
+        /* Right Zone: History Log */
+        .history-zone {
+            flex: 1;
+            padding: 20px;
+            background-color: var(--panel-bg);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+            .history-zone h2 {
+                margin-top: 0;
+                font-size: 1.2rem;
+                border-bottom: 2px solid #eee;
+                padding-bottom: 10px;
+            }
+
+        #log-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .log-entry {
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .log-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .log-bib {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            width: 40px;
+        }
+
+        .log-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .log-lap-num {
+            font-size: 0.8rem;
+            color: #555;
+        }
+
+        .log-status {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .log-time {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: var(--timer-bg);
+            font-size: 1.1rem;
+        }
+
+        .log-entry.log-last {
+            background-color: #fce4e4;
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .log-entry.log-finish {
+            background-color: #e8f8f5;
+            border-left: 4px solid var(--success-color);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Contagiri & Cronometro</h1>
+
+        <div id="setup-panel" class="config-panel">
+            <div class="input-group">
+                <label for="bibs">Pettorali (es. 101, 102)</label>
+                <input type="text" id="bibs" value="1, 2, 3, 4">
+            </div>
+            <div class="input-group">
+                <label for="distance">Distanza (m)</label>
+                <input type="number" id="distance" value="800" step="100">
+            </div>
+            <div class="input-group">
+                <label for="track-type">Pista</label>
+                <select id="track-type">
+                    <option value="400">400m</option>
+                    <option value="200">200m</option>
+                </select>
+            </div>
+            <button class="btn-primary" onclick="initRace()">Prepara Gara</button>
+        </div>
+
+        <div id="active-race-header" class="hidden">
+            <div style="text-align: center; margin-bottom: 5px; font-size: 0.9rem;">
+                Gara: <span id="display-dist"></span>m su <span id="display-track"></span>m (<span id="display-laps"></span> giri)
+                <button class="btn-edit" onclick="resetRace()">Reset</button>
+            </div>
+
+            <div class="timer-container">
+                <div id="main-timer">00:00.00</div>
+                <button id="btn-timer-toggle" class="btn-start" onclick="toggleTimer()">START</button>
+            </div>
+        </div>
+    </header>
+
+    <div id="race-interface" class="hidden">
+        <div class="runners-zone">
+            <div id="runners-grid" class="runners-grid"></div>
+        </div>
+
+        <div class="history-zone">
+            <h2>Tempi e Passaggi</h2>
+            <ul id="log-list"></ul>
+        </div>
+    </div>
+
+    <script>
+        // --- LOGICA CRONOMETRO ---
+        let startTime = 0;
+        let elapsedTime = 0;
+        let timerInterval = null;
+        let isRunning = false;
+
+        function toggleTimer() {
+            const btn = document.getElementById('btn-timer-toggle');
+
+            if (!isRunning) {
+                // START
+                isRunning = true;
+                startTime = Date.now() - elapsedTime;
+                timerInterval = setInterval(updateTimerDisplay, 37); // ~30fps
+
+                btn.textContent = "STOP";
+                btn.className = "btn-stop";
+
+                // Abilita i pulsanti dei corridori
+                document.querySelectorAll('.runner-card').forEach(card => {
+                    card.classList.remove('disabled');
+                });
+
+            } else {
+                // STOP
+                isRunning = false;
+                clearInterval(timerInterval);
+                btn.textContent = "RIPRENDI";
+                btn.className = "btn-start";
+            }
+        }
+
+        function updateTimerDisplay() {
+            const now = Date.now();
+            elapsedTime = now - startTime;
+            document.getElementById('main-timer').textContent = formatTime(elapsedTime);
+        }
+
+        function formatTime(ms) {
+            let totalSeconds = Math.floor(ms / 1000);
+            let minutes = Math.floor(totalSeconds / 60);
+            let seconds = totalSeconds % 60;
+            let centiseconds = Math.floor((ms % 1000) / 10);
+
+            const pad = (num) => num.toString().padStart(2, '0');
+            return `${pad(minutes)}:${pad(seconds)}.${pad(centiseconds)}`;
+        }
+
+        // --- LOGICA GARA ---
+        let raceConfig = {
+            runners: [],
+            totalLaps: 0,
+        };
+
+        const setupPanel = document.getElementById('setup-panel');
+        const activeHeader = document.getElementById('active-race-header');
+        const raceInterface = document.getElementById('race-interface');
+        const runnersGrid = document.getElementById('runners-grid');
+        const logList = document.getElementById('log-list');
+
+        function initRace() {
+            const bibsInput = document.getElementById('bibs').value;
+            const distInput = parseInt(document.getElementById('distance').value);
+            const trackInput = parseInt(document.getElementById('track-type').value);
+
+            if (!bibsInput || !distInput) return alert("Dati mancanti!");
+
+            const calculatedLaps = Math.ceil(distInput / trackInput);
+
+            raceConfig.totalLaps = calculatedLaps;
+            raceConfig.runners = bibsInput.split(',').map(s => s.trim()).filter(s => s !== "")
+                .map(bib => ({ id: bib, lapsDone: 0, finished: false }));
+
+            // Update UI
+            document.getElementById('display-dist').textContent = distInput;
+            document.getElementById('display-track').textContent = trackInput;
+            document.getElementById('display-laps').textContent = calculatedLaps;
+
+            setupPanel.classList.add('hidden');
+            activeHeader.classList.remove('hidden');
+            raceInterface.classList.remove('hidden');
+            raceInterface.style.display = 'flex';
+
+            // Reset Timer & Log
+            elapsedTime = 0;
+            isRunning = false;
+            document.getElementById('main-timer').textContent = "00:00.00";
+            document.getElementById('btn-timer-toggle').textContent = "START";
+            document.getElementById('btn-timer-toggle').className = "btn-start";
+            logList.innerHTML = '';
+
+            renderRunners();
+        }
+
+        function resetRace() {
+            if(confirm("Vuoi resettare gara e tempi?")) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                setupPanel.classList.remove('hidden');
+                activeHeader.classList.add('hidden');
+                raceInterface.classList.add('hidden');
+                raceInterface.style.display = 'none';
+            }
+        }
+
+        function renderRunners() {
+            runnersGrid.innerHTML = '';
+            raceConfig.runners.forEach(runner => {
+                if (runner.finished) return;
+
+                const btn = document.createElement('div');
+                // I pulsanti nascono disabilitati finché non parte il tempo
+                btn.className = isRunning ? 'runner-card' : 'runner-card disabled';
+
+                const lapsRemaining = raceConfig.totalLaps - runner.lapsDone;
+                if (lapsRemaining === 1) btn.classList.add('last-lap');
+
+                btn.innerHTML = `
+                    <span class="runner-number">${runner.id}</span>
+                    <div class="runner-laps">
+                        ${lapsRemaining} giri al termine
+                        <br><small>(Fatti: ${runner.lapsDone})</small>
+                    </div>
+                `;
+
+                btn.onclick = () => registerLap(runner.id);
+                runnersGrid.appendChild(btn);
+            });
+        }
+
+        function registerLap(bibId) {
+            // Impedisci click se il tempo non è partito
+            if (!isRunning) return;
+
+            const runner = raceConfig.runners.find(r => r.id === bibId);
+            if (!runner || runner.finished) return;
+
+            runner.lapsDone++;
+            const lapsRemaining = raceConfig.totalLaps - runner.lapsDone;
+
+            let logType = 'normal';
+            if (lapsRemaining === 1) logType = 'last';
+            if (lapsRemaining <= 0) {
+                runner.finished = true;
+                logType = 'finish';
+            }
+
+            // Usa il tempo corrente del cronometro
+            const currentSplit = formatTime(elapsedTime);
+            addLogEntry(runner.id, runner.lapsDone, logType, currentSplit);
+            renderRunners();
+        }
+
+        function addLogEntry(bib, lapNumber, type, timeString) {
+            const li = document.createElement('li');
+            li.className = 'log-entry';
+
+            let statusText = `Giro ${lapNumber}`;
+            if (type === 'last') {
+                li.classList.add('log-last');
+                statusText = "CAMPANA (Ultimo)";
+            } else if (type === 'finish') {
+                li.classList.add('log-finish');
+                statusText = "ARRIVO";
+            }
+
+            li.innerHTML = `
+                <div class="log-left">
+                    <span class="log-bib">${bib}</span>
+                    <div class="log-info">
+                        <span class="log-status">${statusText}</span>
+                    </div>
+                </div>
+                <span class="log-time">${timeString}</span>
+            `;
+            logList.insertBefore(li, logList.firstChild);
+        }
+    </script>
+</body>
+</html>
