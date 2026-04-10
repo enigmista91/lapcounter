@@ -297,6 +297,62 @@
         .hidden {
             display: none !important;
         }
+
+        /* Dettaglio Giri */
+        #lap-details-section {
+            background-color: var(--panel-bg);
+            padding: 15px;
+            margin-top: 10px;
+            border-top: 2px solid #ccc;
+            overflow-x: auto;
+        }
+
+        .lap-details-grid {
+            display: grid;
+            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+
+        .runner-lap-card {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 10px;
+        }
+
+        .runner-lap-card h3 {
+            margin: 0 0 10px 0;
+            color: var(--primary-color);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .lap-time-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+            padding-bottom: 4px;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .lap-time-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .lap-time-total {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+
+        .lap-time-partial {
+            font-family: 'Courier New', monospace;
+            color: #777;
+            font-size: 0.8rem;
+        }
     </style>
 </head>
 <body>
@@ -327,6 +383,7 @@
                 <button class="btn-edit" onclick="resetRace()">Reset</button>
                 <button class="btn-group-action" onclick="massLapUpdate()">Tutti -1 Giro</button>
                 <button class="btn-whatsapp" onclick="shareToWhatsApp()">Condividi su WhatsApp</button>
+                <button class="btn-primary" onclick="toggleLapDetails()" style="margin-left: 10px; background-color: #9b59b6;">Dettaglio Giri</button>
             </div>
 
             <div class="timer-container">
@@ -336,7 +393,7 @@
         </div>
     </header>
 
-    <div id="race-interface" class="hidden">
+        <div id="race-interface" class="hidden">
         <div class="runners-zone">
             <div id="runners-grid" class="runners-grid"></div>
         </div>
@@ -344,6 +401,12 @@
             <h2>Storico Passaggi</h2>
             <ul id="log-list"></ul>
         </div>
+    </div>
+
+    <!-- Sezione Dettaglio Giri -->
+    <div id="lap-details-section" class="hidden">
+        <h2>Dettaglio Giri per Atleta</h2>
+        <div id="lap-details-grid" class="lap-details-grid"></div>
     </div>
 
     <script>
@@ -392,7 +455,7 @@
 
             raceConfig.totalLaps = calculatedLaps;
             raceConfig.runners = bibsInput.split(',').map(s => s.trim()).filter(s => s !== "")
-                .map(bib => ({ id: bib, lapsDone: 0, finished: false }));
+                .map(bib => ({ id: bib, lapsDone: 0, finished: false, lapTimes: [] }));
 
             document.getElementById('race-info').innerHTML = `<b>${distInput}m</b> (${calculatedLaps} passaggi)`;
             document.getElementById('setup-panel').classList.add('hidden');
@@ -469,6 +532,9 @@
                 list.insertBefore(li, list.firstChild);
 
                 renderRunners();
+                if (!document.getElementById('lap-details-section').classList.contains('hidden')) {
+                    renderLapDetails();
+                }
             }
         }
 
@@ -479,10 +545,14 @@
 
             processRunnerLap(runner, formatTime(elapsedTime), false);
             renderRunners();
+            if (!document.getElementById('lap-details-section').classList.contains('hidden')) {
+                renderLapDetails();
+            }
         }
 
         function processRunnerLap(runner, timeString, isMassUpdate) {
             runner.lapsDone++;
+            runner.lapTimes.push({ timeString: timeString, timeMs: elapsedTime });
             const lapsRemaining = raceConfig.totalLaps - runner.lapsDone;
 
             let logType = 'normal';
@@ -564,6 +634,66 @@
 
             const encodedMessage = encodeURIComponent(message);
             window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+        }
+
+        function toggleLapDetails() {
+            const section = document.getElementById('lap-details-section');
+            if (section.classList.contains('hidden')) {
+                section.classList.remove('hidden');
+                renderLapDetails();
+                // Scroll down to the section
+                section.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                section.classList.add('hidden');
+            }
+        }
+
+        function renderLapDetails() {
+            const container = document.getElementById('lap-details-grid');
+            container.innerHTML = '';
+
+            raceConfig.runners.forEach(runner => {
+                if (runner.lapTimes.length === 0) return;
+
+                const card = document.createElement('div');
+                card.className = 'runner-lap-card';
+
+                const title = document.createElement('h3');
+                title.textContent = `Pettorale ${runner.id}`;
+                card.appendChild(title);
+
+                runner.lapTimes.forEach((lap, index) => {
+                    const prevTimeMs = index === 0 ? 0 : runner.lapTimes[index - 1].timeMs;
+                    const partialMs = lap.timeMs - prevTimeMs;
+                    const partialString = formatTime(partialMs);
+
+                    const row = document.createElement('div');
+                    row.className = 'lap-time-item';
+
+                    const labelSpan = document.createElement('span');
+                    labelSpan.textContent = `Giro ${index + 1}`;
+
+                    const timeContainer = document.createElement('div');
+                    timeContainer.style.textAlign = 'right';
+
+                    const totalSpan = document.createElement('span');
+                    totalSpan.className = 'lap-time-total';
+                    totalSpan.textContent = lap.timeString;
+
+                    const partialSpan = document.createElement('div');
+                    partialSpan.className = 'lap-time-partial';
+                    partialSpan.textContent = `(parziale: ${partialString})`;
+
+                    timeContainer.appendChild(totalSpan);
+                    timeContainer.appendChild(partialSpan);
+
+                    row.appendChild(labelSpan);
+                    row.appendChild(timeContainer);
+                    card.appendChild(row);
+                });
+
+                container.appendChild(card);
+            });
         }
     </script>
 </body>
