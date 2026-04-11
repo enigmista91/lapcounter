@@ -136,7 +136,6 @@
 
         /* --- Interfaccia Gara --- */
         #race-interface {
-            display: none;
             flex: 1;
             display: flex;
             height: calc(100vh - 150px);
@@ -283,6 +282,10 @@
             border-left: 4px solid var(--success-color);
         }
 
+        .log-entry.log-update {
+            background-color: #f3e5f5;
+        }
+
         .hidden {
             display: none !important;
         }
@@ -386,7 +389,6 @@
             document.getElementById('setup-panel').classList.add('hidden');
             document.getElementById('active-race-header').classList.remove('hidden');
             document.getElementById('race-interface').classList.remove('hidden');
-            document.getElementById('race-interface').style.display = 'flex';
 
             elapsedTime = 0; isRunning = false;
             document.getElementById('main-timer').textContent = "00:00.00";
@@ -404,7 +406,6 @@
                 document.getElementById('setup-panel').classList.remove('hidden');
                 document.getElementById('active-race-header').classList.add('hidden');
                 document.getElementById('race-interface').classList.add('hidden');
-                document.getElementById('race-interface').style.display = 'none';
             }
         }
 
@@ -450,8 +451,7 @@
             if(updatedCount > 0) {
                 // Aggiunge una nota nel log per chiarezza
                 const li = document.createElement('li');
-                li.className = 'log-entry';
-                li.style.backgroundColor = '#f3e5f5'; // Violetto chiaro
+                li.className = 'log-entry log-update';
                 li.innerHTML = `<i>Aggiornamento Gruppo (${updatedCount} atleti)</i> <span class="log-time">${currentTime}</span>`;
                 const list = document.getElementById('log-list');
                 list.insertBefore(li, list.firstChild);
