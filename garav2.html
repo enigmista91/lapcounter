@@ -413,6 +413,16 @@
                 </select>
             </div>
             <button class="btn-primary" onclick="initRace()">Crea</button>
+            <button class="btn-edit" onclick="showArchive()" style="margin-left: 10px;">Storico Gare</button>
+        </div>
+
+        <!-- Sezione Archivio -->
+        <div id="archive-section" class="hidden" style="padding: 10px; background: white; margin: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Storico Gare</h2>
+                <button class="btn-danger" onclick="hideArchive()" style="background-color: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Chiudi</button>
+            </div>
+            <div id="archive-list" style="margin-top: 10px;"></div>
         </div>
 
         <div id="active-race-header" class="hidden">
@@ -444,7 +454,10 @@
 
     <!-- Sezione Classifica -->
     <div id="leaderboard-section" class="hidden">
-        <h2>Classifica Live</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>Classifica</h2>
+            <button class="btn-danger" onclick="document.getElementById('leaderboard-section').classList.add('hidden')" style="background-color: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Chiudi</button>
+        </div>
         <table class="leaderboard-table" id="leaderboard-table">
             <thead>
                 <tr>
@@ -461,13 +474,38 @@
 
     <!-- Sezione Dettaglio Giri -->
     <div id="lap-details-section" class="hidden">
-        <h2>Dettaglio Giri per Atleta</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>Dettaglio Giri per Atleta</h2>
+            <button class="btn-danger" onclick="document.getElementById('lap-details-section').classList.add('hidden')" style="background-color: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Chiudi</button>
+        </div>
         <div id="lap-details-grid" class="lap-details-grid"></div>
     </div>
 
     <script>
         let startTime = 0, elapsedTime = 0, timerInterval = null, isRunning = false;
-        let raceConfig = { runners: [], totalLaps: 0 };
+        let raceConfig = { runners: [], totalLaps: 0, logs: [], date: null, dist: 0, type: 0 };
+
+        const STORAGE_KEY = 'gara_active';
+        const ARCHIVE_KEY = 'gara_archive';
+
+        function saveCurrentState() {
+            if (raceConfig && raceConfig.runners.length > 0) {
+                const state = {
+                    raceConfig: raceConfig,
+                    elapsedTime: elapsedTime,
+                    isRunning: isRunning,
+                    startTime: startTime
+                };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            } else {
+                localStorage.removeItem(STORAGE_KEY);
+            }
+        }
+
+        function clearCurrentState() {
+            localStorage.removeItem(STORAGE_KEY);
+        }
+
 
         function toggleTimer() {
             const btn = document.getElementById('btn-timer-toggle');
@@ -487,6 +525,7 @@
                 btn.textContent = "RIPRENDI";
                 btn.className = "btn-start";
             }
+            saveCurrentState();
         }
 
         function formatTime(ms) {
@@ -512,6 +551,10 @@
             raceConfig.totalLaps = calculatedLaps;
             raceConfig.runners = bibsInput.split(',').map(s => s.trim()).filter(s => s !== "")
                 .map(bib => ({ id: bib, lapsDone: 0, finished: false, lapTimes: [] }));
+            raceConfig.logs = [];
+            raceConfig.date = new Date().toISOString();
+            raceConfig.dist = distInput;
+            raceConfig.type = trackInput;
 
             document.getElementById('race-info').innerHTML = `<b>${distInput}m</b> (${calculatedLaps} passaggi)`;
             document.getElementById('setup-panel').classList.add('hidden');
@@ -526,17 +569,44 @@
             document.getElementById('log-list').innerHTML = '';
 
             renderRunners();
+            saveCurrentState();
         }
 
         function resetRace() {
-            if(confirm("Vuoi resettare tutto?")) {
+            if(confirm("Vuoi resettare tutto? Questa gara verr\xe0 archiviata (se ci sono passaggi).")) {
                 clearInterval(timerInterval);
                 isRunning = false;
+
+                // Archivia la gara se c'\xe8 almeno un passaggio
+                if (raceConfig && raceConfig.runners.some(r => r.lapsDone > 0)) {
+                    archiveCurrentRace();
+                }
+                clearCurrentState();
+
                 document.getElementById('setup-panel').classList.remove('hidden');
                 document.getElementById('active-race-header').classList.add('hidden');
                 document.getElementById('race-interface').classList.add('hidden');
                 document.getElementById('race-interface').style.display = 'none';
+
+                // Nascondi anche le sezioni dettaglio se aperte
+                document.getElementById('lap-details-section').classList.add('hidden');
+                document.getElementById('leaderboard-section').classList.add('hidden');
+
+                // Pulisci l'interfaccia
+                document.getElementById('main-timer').textContent = "00:00.00";
+                document.getElementById('btn-timer-toggle').textContent = "START";
+                document.getElementById('btn-timer-toggle').className = "btn-start";
+                document.getElementById('log-list').innerHTML = '';
             }
+        }
+
+        function archiveCurrentRace() {
+            let archives = JSON.parse(localStorage.getItem(ARCHIVE_KEY)) || [];
+            // Assicurati che abbia una data
+            if (!raceConfig.date) raceConfig.date = new Date().toISOString();
+            archives.push(raceConfig);
+            localStorage.setItem(ARCHIVE_KEY, JSON.stringify(archives));
+            alert("Gara archiviata con successo!");
         }
 
         function renderRunners() {
@@ -630,9 +700,15 @@
             if (!isMassUpdate || logType !== 'normal') {
                 addLogEntry(runner.id, runner.lapsDone, logType, timeString);
             }
+            saveCurrentState();
         }
 
         function addLogEntry(bib, lapNumber, type, timeString) {
+            raceConfig.logs.push({ bib, lapNumber, type, timeString });
+            renderLogEntry(bib, lapNumber, type, timeString);
+        }
+
+        function renderLogEntry(bib, lapNumber, type, timeString) {
             const li = document.createElement('li');
             li.className = 'log-entry';
 
@@ -711,10 +787,16 @@
         }
 
         function renderLapDetails() {
+            renderLapDetailsWithData(raceConfig);
+        }
+
+        function renderLapDetailsWithData(configData) {
             const container = document.getElementById('lap-details-grid');
             container.innerHTML = '';
 
-            raceConfig.runners.forEach(runner => {
+            if (!configData || !configData.runners) return;
+
+            configData.runners.forEach(runner => {
                 if (runner.lapTimes.length === 0) return;
 
                 const card = document.createElement('div');
@@ -770,11 +852,17 @@
         }
 
         function renderLeaderboard() {
+            renderLeaderboardWithData(raceConfig);
+        }
+
+        function renderLeaderboardWithData(configData) {
             const tbody = document.getElementById('leaderboard-body');
             tbody.innerHTML = '';
 
+            if (!configData || !configData.runners) return;
+
             // Clone array to sort without mutating original
-            let ranked = [...raceConfig.runners];
+            let ranked = [...configData.runners];
 
             ranked.sort((a, b) => {
                 // 1. Finished status takes precedence
@@ -847,6 +935,201 @@
                 tbody.appendChild(tr);
             });
         }
+
+        window.onload = function() {
+            checkSavedState();
+        };
+
+        function checkSavedState() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (savedData) {
+                if (confirm("\xc8 stata trovata una gara in corso. Vuoi ripristinarla?")) {
+                    restoreState(JSON.parse(savedData));
+                } else {
+                    clearCurrentState();
+                }
+            }
+        }
+
+        function restoreState(state) {
+            raceConfig = state.raceConfig;
+            elapsedTime = state.elapsedTime;
+            isRunning = state.isRunning;
+            startTime = state.startTime;
+
+            // Adjust start time if it was running
+            if (isRunning) {
+                // If it was running, the startTime in state is the absolute time it started!
+                // elapsedTime is recalculated from that startTime.
+                // elapsedTime = Date.now() - startTime;  // This is correct.
+                timerInterval = setInterval(() => {
+                    elapsedTime = Date.now() - startTime;
+                    document.getElementById('main-timer').textContent = formatTime(elapsedTime);
+                }, 37);
+                document.getElementById('btn-timer-toggle').textContent = "STOP";
+                document.getElementById('btn-timer-toggle').className = "btn-stop";
+            } else {
+                document.getElementById('main-timer').textContent = formatTime(elapsedTime);
+                document.getElementById('btn-timer-toggle').textContent = "START";
+                document.getElementById('btn-timer-toggle').className = "btn-start";
+            }
+
+            document.getElementById('race-info').innerHTML =
+                `<b>Distanza:</b> ${raceConfig.dist}m | <b>Pista:</b> ${raceConfig.type}m | <b>Tot. Giri:</b> ${raceConfig.totalLaps}`;
+
+            // Show UI
+            document.getElementById('setup-panel').classList.add('hidden');
+            document.getElementById('active-race-header').classList.remove('hidden');
+            document.getElementById('race-interface').classList.remove('hidden');
+            document.getElementById('race-interface').style.display = 'flex';
+
+            renderRunners();
+
+            // Fix disabled state of runners if not running
+            if (!isRunning) {
+                document.querySelectorAll('.runner-card').forEach(c => c.classList.add('disabled'));
+            }
+
+            // Re-render logs
+            document.getElementById('log-list').innerHTML = '';
+            if (raceConfig.logs) {
+                // We need to loop backwards or forwards depending on how we render.
+                // renderLogEntry uses insertBefore so the latest is on top.
+                // That means we should render from the oldest to newest (beginning of array to end).
+                raceConfig.logs.forEach(log => {
+                    renderLogEntry(log.bib, log.lapNumber, log.type, log.timeString);
+                });
+            }
+        }
+
+
+        function showArchive() {
+            document.getElementById('setup-panel').classList.add('hidden');
+            document.getElementById('archive-section').classList.remove('hidden');
+            renderArchive();
+        }
+
+        function hideArchive() {
+            document.getElementById('archive-section').classList.add('hidden');
+            document.getElementById('setup-panel').classList.remove('hidden');
+
+            // Hide historical details if open
+            document.getElementById('lap-details-section').classList.add('hidden');
+            document.getElementById('leaderboard-section').classList.add('hidden');
+        }
+
+        function renderArchive() {
+            const list = document.getElementById('archive-list');
+            list.innerHTML = '';
+
+            let archives = JSON.parse(localStorage.getItem(ARCHIVE_KEY)) || [];
+
+            if (archives.length === 0) {
+                list.innerHTML = '<p>Nessuna gara in archivio.</p>';
+                return;
+            }
+
+            // Show newest first
+            archives.reverse().forEach((archivedRace, index) => {
+                // actual index in the real array before reverse is archives.length - 1 - index
+                const realIndex = archives.length - 1 - index;
+
+                const d = new Date(archivedRace.date);
+                const dateStr = d.toLocaleString('it-IT');
+
+                const div = document.createElement('div');
+                div.style.border = "1px solid #ccc";
+                div.style.padding = "10px";
+                div.style.margin = "10px 0";
+                div.style.borderRadius = "4px";
+                div.style.display = "flex";
+                div.style.justifyContent = "space-between";
+                div.style.alignItems = "center";
+
+                const info = document.createElement('div');
+                info.innerHTML = `<strong>Data:</strong> ${dateStr} <br>
+                                  <strong>Distanza:</strong> ${archivedRace.dist}m (${archivedRace.type}m pista) <br>
+                                  <strong>Partecipanti:</strong> ${archivedRace.runners.length}`;
+
+                const actions = document.createElement('div');
+
+                const btnViewLeaderboard = document.createElement('button');
+                btnViewLeaderboard.className = 'btn-primary';
+                btnViewLeaderboard.style.backgroundColor = '#e67e22';
+                btnViewLeaderboard.style.marginRight = '5px';
+                btnViewLeaderboard.textContent = 'Classifica';
+                btnViewLeaderboard.onclick = () => viewArchivedLeaderboard(realIndex);
+
+                const btnViewDetails = document.createElement('button');
+                btnViewDetails.className = 'btn-primary';
+                btnViewDetails.style.backgroundColor = '#9b59b6';
+                btnViewDetails.style.marginRight = '5px';
+                btnViewDetails.textContent = 'Dettaglio';
+                btnViewDetails.onclick = () => viewArchivedDetails(realIndex);
+
+                const btnDelete = document.createElement('button');
+                btnDelete.className = 'btn-stop';
+                btnDelete.textContent = 'Elimina';
+                btnDelete.onclick = () => deleteArchivedRace(realIndex);
+
+                actions.appendChild(btnViewLeaderboard);
+                actions.appendChild(btnViewDetails);
+                actions.appendChild(btnDelete);
+
+                div.appendChild(info);
+                div.appendChild(actions);
+                list.appendChild(div);
+            });
+
+            const btnClearAll = document.createElement('button');
+            btnClearAll.className = 'btn-stop';
+            btnClearAll.style.width = '100%';
+            btnClearAll.style.marginTop = '10px';
+            btnClearAll.textContent = 'Svuota Archivio';
+            btnClearAll.onclick = () => {
+                if (confirm('Sei sicuro di voler eliminare tutto lo storico?')) {
+                    localStorage.removeItem(ARCHIVE_KEY);
+                    renderArchive();
+                    document.getElementById('lap-details-section').classList.add('hidden');
+                    document.getElementById('leaderboard-section').classList.add('hidden');
+                }
+            };
+            list.appendChild(btnClearAll);
+        }
+
+        function deleteArchivedRace(index) {
+            if (confirm("Vuoi eliminare questa gara dall'archivio?")) {
+                let archives = JSON.parse(localStorage.getItem(ARCHIVE_KEY)) || [];
+                archives.splice(index, 1);
+                localStorage.setItem(ARCHIVE_KEY, JSON.stringify(archives));
+                renderArchive();
+                document.getElementById('lap-details-section').classList.add('hidden');
+                document.getElementById('leaderboard-section').classList.add('hidden');
+            }
+        }
+
+        function viewArchivedLeaderboard(index) {
+            let archives = JSON.parse(localStorage.getItem(ARCHIVE_KEY)) || [];
+            let archivedRace = archives[index];
+            if (archivedRace) {
+                const section = document.getElementById('leaderboard-section');
+                section.classList.remove('hidden');
+                renderLeaderboardWithData(archivedRace);
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function viewArchivedDetails(index) {
+            let archives = JSON.parse(localStorage.getItem(ARCHIVE_KEY)) || [];
+            let archivedRace = archives[index];
+            if (archivedRace) {
+                const section = document.getElementById('lap-details-section');
+                section.classList.remove('hidden');
+                renderLapDetailsWithData(archivedRace);
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
     </script>
 </body>
 </html>
