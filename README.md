@@ -19,6 +19,14 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
   - Un bottone dedicato permette di scalare contemporaneamente un giro a tutti gli atleti attivi. Perfetto per gestire gruppi compatti.
 - **Log degli Eventi**: 
   - Registrazione cronologica sul display laterale/inferiore di ogni singolo passaggio, arrivo o aggiornamento collettivo, mantenendo trasparenza sull'evoluzione cronometrica.
+- **Salvataggio di Sicurezza (Local Storage)**:
+  - Lo stato della gara in corso viene salvato in tempo reale.
+  - In caso di chiusura accidentale o ricarica della pagina, l'app proporrà il ripristino istantaneo della gara interrotta, evitando la perdita di dati preziosi.
+- **Archivio Gare e Storico**:
+  - Le gare completate o interrotte vengono archiviate automaticamente.
+  - Sezione dedicata per consultare lo storico delle corse passate.
+  - Possibilità di visualizzare la **Classifica Finale** e il **Dettaglio Passaggi** (tempi sul giro) per ogni singolo atleta archiviato.
+  - Gestione dell'archivio (eliminazione singola gara o svuotamento totale).
 - **Reset e Sicurezza**: Conferme prima dell'esecuzione di azioni ad alto impatto (es. Reset totale della gara o Mass Update) per prevenire clic accidentali.
 
 ## 🚀 Utilizzo
@@ -47,3 +55,7 @@ Essendo un'applicazione client-side (senza backend dedicato), l'utilizzo è imme
 
 File originale di riferimento: `garav2.html`. 
 La versione `v2` introduce aggiornamenti di quality-of-life come la comoda funzionalità di *Mass Upate* per alleggerire il carico al giudice al passaggio del gruppo compatto.
+
+## 🤝 Contributi
+
+Le Pull Request sono benvenute, tuttavia si prega di notare che **tutte le PR verranno mergiate esclusivamente dall'owner del progetto** dopo un'attenta revisione.
