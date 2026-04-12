@@ -147,7 +147,6 @@
 
         /* --- Interfaccia Gara --- */
         #race-interface {
-            display: none;
             flex: 1;
             display: flex;
             height: calc(100vh - 150px);
@@ -165,7 +164,7 @@
 
         .runners-grid {
             display: grid;
-            /* FIX 3: Caselle più piccole (min 100px invece di 130px) */
+            /* FIX 3: Caselle piÃ¹ piccole (min 100px invece di 130px) */
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 8px;
         }
@@ -292,6 +291,10 @@
         .log-entry.log-finish {
             background-color: #e8f8f5;
             border-left: 4px solid var(--success-color);
+        }
+
+        .log-entry.log-update {
+            background-color: #f3e5f5;
         }
 
         .hidden {
@@ -546,7 +549,7 @@
             // FIX 1: Arrotondamento per difetto (Math.floor)
             const calculatedLaps = Math.floor(distInput / trackInput);
 
-            if(calculatedLaps < 1) return alert("La distanza è troppo breve per un giro!");
+            if(calculatedLaps < 1) return alert("La distanza Ã¨ troppo breve per un giro!");
 
             raceConfig.totalLaps = calculatedLaps;
             raceConfig.runners = bibsInput.split(',').map(s => s.trim()).filter(s => s !== "")
@@ -560,7 +563,6 @@
             document.getElementById('setup-panel').classList.add('hidden');
             document.getElementById('active-race-header').classList.remove('hidden');
             document.getElementById('race-interface').classList.remove('hidden');
-            document.getElementById('race-interface').style.display = 'flex';
 
             elapsedTime = 0; isRunning = false;
             document.getElementById('main-timer').textContent = "00:00.00";
@@ -586,17 +588,6 @@
                 document.getElementById('setup-panel').classList.remove('hidden');
                 document.getElementById('active-race-header').classList.add('hidden');
                 document.getElementById('race-interface').classList.add('hidden');
-                document.getElementById('race-interface').style.display = 'none';
-
-                // Nascondi anche le sezioni dettaglio se aperte
-                document.getElementById('lap-details-section').classList.add('hidden');
-                document.getElementById('leaderboard-section').classList.add('hidden');
-
-                // Pulisci l'interfaccia
-                document.getElementById('main-timer').textContent = "00:00.00";
-                document.getElementById('btn-timer-toggle').textContent = "START";
-                document.getElementById('btn-timer-toggle').className = "btn-start";
-                document.getElementById('log-list').innerHTML = '';
             }
         }
 
@@ -643,7 +634,7 @@
             // Aggiorna lo stato di tutti i corridori attivi
             raceConfig.runners.forEach(runner => {
                 if (!runner.finished) {
-                    processRunnerLap(runner, currentTime, true); // true = è un aggiornamento di gruppo
+                    processRunnerLap(runner, currentTime, true); // true = Ã¨ un aggiornamento di gruppo
                     updatedCount++;
                 }
             });
@@ -651,8 +642,7 @@
             if(updatedCount > 0) {
                 // Aggiunge una nota nel log per chiarezza
                 const li = document.createElement('li');
-                li.className = 'log-entry';
-                li.style.backgroundColor = '#f3e5f5'; // Violetto chiaro
+                li.className = 'log-entry log-update';
                 li.innerHTML = `<i>Aggiornamento Gruppo (${updatedCount} atleti)</i> <span class="log-time">${currentTime}</span>`;
                 const list = document.getElementById('log-list');
                 list.insertBefore(li, list.firstChild);
@@ -695,7 +685,7 @@
                 logType = 'finish';
             }
 
-            // Se è un aggiornamento di gruppo, non spammiamo il log con ogni singolo atleta,
+            // Se Ã¨ un aggiornamento di gruppo, non spammiamo il log con ogni singolo atleta,
             // ma registriamo comunque se qualcuno finisce o va all'ultimo giro per chiarezza
             if (!isMassUpdate || logType !== 'normal') {
                 addLogEntry(runner.id, runner.lapsDone, logType, timeString);
