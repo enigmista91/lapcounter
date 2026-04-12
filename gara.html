@@ -435,9 +435,15 @@
 
             const calculatedLaps = Math.ceil(distInput / trackInput);
 
+            const bibsArray = bibsInput.split(',').map(s => s.trim()).filter(s => s !== "");
+
+            const uniqueBibs = new Set(bibsArray);
+            if (uniqueBibs.size !== bibsArray.length) {
+                return alert("Pettorali duplicati rilevati!");
+            }
+
             raceConfig.totalLaps = calculatedLaps;
-            raceConfig.runners = bibsInput.split(',').map(s => s.trim()).filter(s => s !== "")
-                .map(bib => ({ id: bib, lapsDone: 0, finished: false }));
+            raceConfig.runners = bibsArray.map(bib => ({ id: bib, lapsDone: 0, finished: false }));
 
             // Update UI
             document.getElementById('display-dist').textContent = distInput;
@@ -483,13 +489,18 @@
                 const lapsRemaining = raceConfig.totalLaps - runner.lapsDone;
                 if (lapsRemaining === 1) btn.classList.add('last-lap');
 
-                btn.innerHTML = `
-                    <span class="runner-number">${runner.id}</span>
-                    <div class="runner-laps">
-                        ${lapsRemaining} giri al termine
-                        <br><small>(Fatti: ${runner.lapsDone})</small>
-                    </div>
+                const numberSpan = document.createElement('span');
+                numberSpan.className = 'runner-number';
+                numberSpan.textContent = runner.id;
+                btn.appendChild(numberSpan);
+
+                const lapsDiv = document.createElement('div');
+                lapsDiv.className = 'runner-laps';
+                lapsDiv.innerHTML = `
+                    ${lapsRemaining} giri al termine
+                    <br><small>(Fatti: ${runner.lapsDone})</small>
                 `;
+                btn.appendChild(lapsDiv);
 
                 btn.onclick = () => registerLap(runner.id);
                 runnersGrid.appendChild(btn);
@@ -532,15 +543,25 @@
                 statusText = "ARRIVO";
             }
 
-            li.innerHTML = `
-                <div class="log-left">
-                    <span class="log-bib">${bib}</span>
-                    <div class="log-info">
-                        <span class="log-status">${statusText}</span>
-                    </div>
-                </div>
-                <span class="log-time">${timeString}</span>
-            `;
+            const logLeftDiv = document.createElement('div');
+            logLeftDiv.className = 'log-left';
+
+            const logBibSpan = document.createElement('span');
+            logBibSpan.className = 'log-bib';
+            logBibSpan.textContent = bib;
+            logLeftDiv.appendChild(logBibSpan);
+
+            const logInfoDiv = document.createElement('div');
+            logInfoDiv.className = 'log-info';
+            logInfoDiv.innerHTML = `<span class="log-status">${statusText}</span>`;
+            logLeftDiv.appendChild(logInfoDiv);
+
+            li.appendChild(logLeftDiv);
+
+            const logTimeSpan = document.createElement('span');
+            logTimeSpan.className = 'log-time';
+            logTimeSpan.textContent = timeString;
+            li.appendChild(logTimeSpan);
             logList.insertBefore(li, logList.firstChild);
         }
     </script>

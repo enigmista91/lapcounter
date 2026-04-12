@@ -597,9 +597,15 @@
 
             if(calculatedLaps < 1) return alert("La distanza è troppo breve per un giro!");
 
+            const bibsArray = bibsInput.split(',').map(s => s.trim()).filter(s => s !== "");
+
+            const uniqueBibs = new Set(bibsArray);
+            if (uniqueBibs.size !== bibsArray.length) {
+                return alert("Pettorali duplicati rilevati!");
+            }
+
             raceConfig.totalLaps = calculatedLaps;
-            raceConfig.runners = bibsInput.split(',').map(s => s.trim()).filter(s => s !== "")
-                .map(bib => ({ id: bib, lapsDone: 0, finished: false, lapTimes: [] }));
+            raceConfig.runners = bibsArray.map(bib => ({ id: bib, lapsDone: 0, finished: false, lapTimes: [] }));
             raceConfig.logs = [];
             raceConfig.date = new Date().toISOString();
             raceConfig.dist = distInput;
@@ -658,12 +664,16 @@
 
                 if (lapsRemaining === 1) btn.classList.add('last-lap');
 
-                btn.innerHTML = `
-                    <span class="runner-number">${runner.id}</span>
-                    <div class="runner-laps">
-                        <b>${lapsRemaining}</b> giri
-                    </div>
-                `;
+                const numberSpan = document.createElement('span');
+                numberSpan.className = 'runner-number';
+                numberSpan.textContent = runner.id;
+                btn.appendChild(numberSpan);
+
+                const lapsDiv = document.createElement('div');
+                lapsDiv.className = 'runner-laps';
+                lapsDiv.innerHTML = `<b>${lapsRemaining}</b> giri`;
+                btn.appendChild(lapsDiv);
+
                 btn.onclick = () => registerLap(runner.id);
                 grid.appendChild(btn);
             });
@@ -757,13 +767,26 @@
                 statusText = "ARRIVO";
             }
 
-            li.innerHTML = `
-                <div class="log-left">
-                    <span class="log-bib">${bib}</span>
-                    <span style="font-size:0.8rem; color:#555;">${statusText}</span>
-                </div>
-                <span class="log-time">${timeString}</span>
-            `;
+            const logLeftDiv = document.createElement('div');
+            logLeftDiv.className = 'log-left';
+
+            const logBibSpan = document.createElement('span');
+            logBibSpan.className = 'log-bib';
+            logBibSpan.textContent = bib;
+            logLeftDiv.appendChild(logBibSpan);
+
+            const statusSpan = document.createElement('span');
+            statusSpan.style.cssText = "font-size:0.8rem; color:#555;";
+            statusSpan.textContent = statusText;
+            logLeftDiv.appendChild(statusSpan);
+
+            li.appendChild(logLeftDiv);
+
+            const logTimeSpan = document.createElement('span');
+            logTimeSpan.className = 'log-time';
+            logTimeSpan.textContent = timeString;
+            li.appendChild(logTimeSpan);
+
             const list = document.getElementById('log-list');
             list.insertBefore(li, list.firstChild);
         }
