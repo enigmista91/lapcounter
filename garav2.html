@@ -284,6 +284,38 @@
             color: var(--timer-bg);
         }
 
+        /* Responsive per il bottone di visuale mobile */
+        #btn-mobile-view {
+            display: none;
+            background-color: var(--group-btn-color);
+        }
+
+        @media (max-width: 768px) {
+            #btn-mobile-view {
+                display: inline-block;
+            }
+        }
+
+        /* Classe per la visuale mobile impilata */
+        #race-interface.mobile-stacked {
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        #race-interface.mobile-stacked .runners-zone {
+            flex: none;
+            border-right: none;
+            border-bottom: 2px solid #ccc;
+            overflow-y: visible; /* Lasciamo che sia il contenitore padre a scrollare */
+        }
+
+        #race-interface.mobile-stacked .history-zone {
+            flex: none;
+            border-left: none;
+            min-height: 300px;
+            overflow-y: visible;
+        }
+
         .log-entry.log-last {
             background-color: #fce4e4;
             border-left: 4px solid var(--danger-color);
@@ -438,6 +470,7 @@
             <div class="timer-container">
                 <div id="main-timer">00:00.00</div>
                 <button id="btn-timer-toggle" class="btn-start" onclick="toggleTimer()">START</button>
+                <button id="btn-mobile-view" class="btn-mobile-view" onclick="toggleMobileView()">Visuale mobile</button>
             </div>
         </div>
     </header>
@@ -506,6 +539,19 @@
             localStorage.removeItem(STORAGE_KEY);
         }
 
+
+        function toggleMobileView() {
+            const raceInterface = document.getElementById('race-interface');
+            const btn = document.getElementById('btn-mobile-view');
+
+            raceInterface.classList.toggle('mobile-stacked');
+
+            if (raceInterface.classList.contains('mobile-stacked')) {
+                btn.textContent = "Visuale affiancata";
+            } else {
+                btn.textContent = "Visuale mobile";
+            }
+        }
 
         function toggleTimer() {
             const btn = document.getElementById('btn-timer-toggle');
