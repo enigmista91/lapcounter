@@ -426,6 +426,70 @@
         .lb-time { font-family: 'Courier New', monospace; }
         .lb-gap { font-family: 'Courier New', monospace; color: #e74c3c; font-size: 0.85rem;}
         .lb-dns { color: #7f8c8d; font-style: italic; }
+
+        .btn-email {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            margin-left: 5px;
+        }
+
+        .btn-email:hover {
+            opacity: 0.9;
+        }
+
+        .btn-print {
+            background-color: #7f8c8d;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            margin-left: 5px;
+        }
+
+        .btn-print:hover {
+            opacity: 0.9;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #leaderboard-section, #leaderboard-section * {
+                visibility: visible;
+            }
+            #leaderboard-section {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                border: none;
+                margin: 0;
+                padding: 0;
+                background-color: white;
+            }
+            .leaderboard-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            .leaderboard-table th, .leaderboard-table td {
+                border: 1px solid #000;
+                padding: 8px;
+                text-align: center;
+                color: #000;
+            }
+            button, .btn-danger, .btn-primary, .btn-whatsapp, .btn-email, .btn-print, .btn-edit, .btn-group-action {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -466,6 +530,8 @@
                 <button class="btn-edit" onclick="resetRace()">Reset</button>
                 <button class="btn-group-action" onclick="massLapUpdate()">Tutti -1 Giro</button>
                 <button class="btn-whatsapp" onclick="shareToWhatsApp()">Condividi su WhatsApp</button>
+                <button class="btn-email" onclick="shareToEmail()">Invia via Email</button>
+                <button class="btn-print" onclick="printLeaderboard()">Stampa Classifica</button>
                 <button class="btn-primary" onclick="toggleLapDetails()" style="margin-left: 10px; background-color: #9b59b6;">Dettaglio Giri</button>
                 <button class="btn-primary" onclick="toggleLeaderboard()" style="margin-left: 10px; background-color: #e67e22;">Mostra Classifica</button>
             </div>
@@ -831,6 +897,59 @@
 
             const encodedMessage = encodeURIComponent(message);
             window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+        }
+
+        function shareToEmail() {
+            if (!raceConfig || !raceConfig.runners || raceConfig.runners.length === 0) {
+                alert("Nessuna gara attiva da condividere!");
+                return;
+            }
+
+            const distInput = document.getElementById('distance').value || 'sconosciuta';
+            let subject = `Classifica Gara ${distInput}m`;
+            let message = `Classifica Gara ${distInput}m\n\n`;
+
+            const finishedRunners = raceConfig.runners.filter(r => r.finished);
+            const activeRunners = raceConfig.runners.filter(r => !r.finished);
+
+            finishedRunners.sort((a, b) => {
+                if (a.finishTime < b.finishTime) return -1;
+                if (a.finishTime > b.finishTime) return 1;
+                return 0;
+            });
+
+            if (finishedRunners.length > 0) {
+                message += `ARRIVATI:\n`;
+                finishedRunners.forEach((r, index) => {
+                    message += `${index + 1} - Pettorale ${r.id}: ${r.finishTime}\n`;
+                });
+                message += `\n`;
+            }
+
+            if (activeRunners.length > 0) {
+                activeRunners.sort((a, b) => b.lapsDone - a.lapsDone);
+
+                message += `IN GARA:\n`;
+                activeRunners.forEach(r => {
+                    const lapsRemaining = raceConfig.totalLaps - r.lapsDone;
+                    message += `- Pettorale ${r.id}: mancano ${lapsRemaining} giri\n`;
+                });
+            }
+
+            message += `\nGenerato dal Contagiri Atletica.`;
+
+            const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+            window.location.href = mailtoLink;
+        }
+
+        function printLeaderboard() {
+            const section = document.getElementById('leaderboard-section');
+            if (section.classList.contains('hidden')) {
+                // Se non \xe8 visibile, la apriamo e la renderizziamo prima di stampare
+                section.classList.remove('hidden');
+                renderLeaderboard();
+            }
+            window.print();
         }
 
         function toggleLapDetails() {
