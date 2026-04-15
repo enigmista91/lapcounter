@@ -19,6 +19,9 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
   - Un bottone dedicato permette di scalare contemporaneamente un giro a tutti gli atleti attivi. Perfetto per gestire gruppi compatti.
 - **Log degli Eventi**: 
   - Registrazione cronologica sul display laterale/inferiore di ogni singolo passaggio, arrivo o aggiornamento collettivo, mantenendo trasparenza sull'evoluzione cronometrica.
+- **Condivisione e Stampa**:
+  - Condivisione istantanea della classifica della gara in corso (o archiviata) via **WhatsApp** ed **Email**.
+  - Funzione **Stampa Classifica** per generare un foglio pulito ed essenziale, ottimizzato per la stampa, con la classifica finale o parziale.
 - **Salvataggio di Sicurezza (Local Storage)**:
   - Lo stato della gara in corso viene salvato in tempo reale.
   - In caso di chiusura accidentale o ricarica della pagina, l'app proporrà il ripristino istantaneo della gara interrotta, evitando la perdita di dati preziosi.
