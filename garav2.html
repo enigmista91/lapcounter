@@ -490,9 +490,130 @@
                 display: none !important;
             }
         }
+
+        /* --- Modal Guida all'uso --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-content {
+            background-color: var(--panel-bg);
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+            padding: 0;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .btn-close:hover {
+            color: var(--danger-color);
+            background: none;
+            opacity: 1;
+        }
+
+        .modal-body {
+            padding: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .modal-body h3 {
+            margin-top: 0;
+            font-size: 1.05rem;
+            color: var(--text-color);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 4px;
+        }
+
+        .modal-body p {
+            margin-bottom: 15px;
+        }
+
+        .modal-body ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            text-align: right;
+            background-color: #f9f9f9;
+            border-radius: 0 0 8px 8px;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Modal Guida all'uso -->
+    <div id="guide-modal" class="modal-overlay hidden" onclick="closeGuideModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Guida all'uso</h2>
+                <button class="btn-close" onclick="closeGuideModal(event)">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3>1. Setup Iniziale</h3>
+                <p>Inserisci i pettorali degli atleti separati da virgola (es. <code>1, 2, 5, 10</code>). Imposta la distanza totale e la lunghezza della pista. Clicca su <strong>Crea</strong> per generare la gara.</p>
+
+                <h3>2. Avvio Gara</h3>
+                <p>Clicca sul bottone <strong>START</strong> in alto per avviare il cronometro e sbloccare le schede degli atleti.</p>
+
+                <h3>3. Gestione Giri</h3>
+                <ul>
+                    <li><strong>Scheda Atleta:</strong> Clicca sulla scheda di un singolo atleta al suo passaggio sul traguardo per scalare un giro e registrare il tempo.</li>
+                    <li><strong>Tutti -1 Giro:</strong> Usa questo bottone nell'header se un gruppo compatto transita sul traguardo, scaler&agrave; un giro a tutti gli atleti attivi.</li>
+                </ul>
+
+                <h3>4. Funzioni Extra</h3>
+                <ul>
+                    <li><strong>Storico Gare / Dettaglio Giri:</strong> Permette di consultare i tempi sul giro e le gare archiviate.</li>
+                    <li><strong>Condivisione:</strong> Al termine, puoi stampare la classifica o condividerla via WhatsApp o Email.</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="closeGuideModal(event)">Ho capito</button>
+            </div>
+        </div>
+    </div>
 
     <header>
         <div id="setup-panel" class="config-panel">
@@ -513,6 +634,7 @@
             </div>
             <button class="btn-primary" onclick="initRace()">Crea</button>
             <button class="btn-edit" onclick="showArchive()" style="margin-left: 10px;">Storico Gare</button>
+            <button class="btn-primary" onclick="openGuideModal()" style="margin-left: 10px; background-color: #2ecc71;">Guida all'uso</button>
         </div>
 
         <!-- Sezione Archivio -->
@@ -586,6 +708,15 @@
     <script>
         let startTime = 0, elapsedTime = 0, timerInterval = null, isRunning = false;
         let raceConfig = { runners: [], totalLaps: 0, logs: [], date: null, dist: 0, type: 0 };
+
+        function openGuideModal() {
+            document.getElementById('guide-modal').classList.remove('hidden');
+        }
+
+        function closeGuideModal(event) {
+            if (event) event.stopPropagation();
+            document.getElementById('guide-modal').classList.add('hidden');
+        }
 
         const STORAGE_KEY = 'gara_active';
         const ARCHIVE_KEY = 'gara_archive';
