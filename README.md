@@ -8,6 +8,7 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
 
 - **Configurazione Gara**: 
   - Inserimento dei pettorali degli atleti partecipanti (separati da virgola).
+  - Controllo automatico anti-duplicati durante l'inserimento dei pettorali.
   - Impostazione della distanza totale della gara.
   - Calcolo automatico del numero di giri/passaggi previsti.
 - **Cronometro Integrato**: Display in tempo reale (`MM:SS.ms`) del tempo trascorso dall'inizio della gara.
@@ -19,6 +20,10 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
   - Un bottone dedicato permette di scalare contemporaneamente un giro a tutti gli atleti attivi. Perfetto per gestire gruppi compatti.
 - **Log degli Eventi**: 
   - Registrazione cronologica sul display laterale/inferiore di ogni singolo passaggio, arrivo o aggiornamento collettivo, mantenendo trasparenza sull'evoluzione cronometrica.
+- **Classifica in Tempo Reale**:
+  - Modalità "Mostra Classifica" attivabile con apposito bottone a gara in corso.
+  - Ordinamento dinamico per atleti completati, numero di giri e tempo.
+  - Calcolo del distacco per atleti nello stesso giro e stato (DNS se 0 giri).
 - **Condivisione e Stampa**:
   - Condivisione istantanea della classifica della gara in corso (o archiviata) via **WhatsApp** ed **Email**.
   - Funzione **Stampa Classifica** per generare un foglio pulito ed essenziale, ottimizzato per la stampa, con la classifica finale o parziale.
@@ -46,7 +51,7 @@ Essendo un'applicazione client-side (senza backend dedicato), l'utilizzo è imme
 5. **Fine**: A completamento giri, la card indicherà l'arrivo al traguardo ("Arrivo").
 
 > [!TIP]
-> **Ottimizzazione Tablet/Mobile**: L'interfaccia con pulsanti ampi ("cards") è ottimizzata anche per l'utilizzo in pista tramite tablet o schermi touch.
+> **Ottimizzazione Tablet/Mobile**: L'interfaccia con pulsanti ampi ("cards") è ottimizzata anche per l'utilizzo in pista tramite tablet o schermi touch. Inoltre, è presente il pulsante "Visuale mobile" per riorganizzare l'interfaccia ottimizzandola per gli schermi più piccoli.
 
 ## 🛠 Stack Tecnologico
 
