@@ -64,6 +64,17 @@ Essendo un'applicazione client-side (senza backend dedicato), l'utilizzo è imme
 File originale di riferimento: `garav2.html`. 
 La versione `v2` introduce aggiornamenti di quality-of-life come la comoda funzionalità di *Mass Upate* per alleggerire il carico al giudice al passaggio del gruppo compatto.
 
+Questo progetto è distribuito sotto licenza **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)**.
+
+[![CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+
+In sintesi, sei libero di condividere e modificare questo materiale, a condizione che:
+1. **Attribuzione**: Riconosci il credito adeguato all'autore originale.
+2. **Non Commerciale**: Non utilizzi il materiale per scopi commerciali o per trarne profitto.
+3. **Condividi allo Stesso Modo**: Se modifichi il materiale, devi distribuire i tuoi contributi con la stessa licenza dell'originale.
+
+Per maggiori dettagli, consulta il file `LICENSE` incluso in questo repository o visita il [sito ufficiale Creative Commons](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+
 ## 🤝 Contributi
 
 Le Pull Request sono benvenute, tuttavia si prega di notare che **tutte le PR verranno mergiate esclusivamente dall'owner del progetto** dopo un'attenta revisione.
