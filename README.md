@@ -16,6 +16,7 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
   - Ogni atleta ha una "scheda" dedicata cliccabile.
   - Ad ogni clic, il contatore dei giri decresce e viene registrato il tempo di passaggio.
   - Segnalazione automatica di **Campana** (ultimo giro) e **Arrivo** a fine gara.
+  - Possibilità di **Ritirare un Atleta** a gara in corso tramite l'apposito pulsante: l'atleta non scalerà più giri e verrà classificato con lo stato di **DNF** (Did Not Finish).
 - **Aggiornamento di Gruppo (Mass Update)**:
   - Un bottone dedicato permette di scalare contemporaneamente un giro a tutti gli atleti attivi. Perfetto per gestire gruppi compatti.
 - **Log degli Eventi**: 
@@ -46,6 +47,7 @@ Essendo un'applicazione client-side (senza backend dedicato), l'utilizzo è imme
    - Inserisci la lista dei pettorali nella barra di testo iniziale (es: `1,2,5,10,23`).
    - Seleziona/inserisci la distanza desiderata.
    - Conferma la configurazione, passando alla dashboard di gara.
+   - *Nota: è disponibile un pulsante **Guida all'uso** per un rapido riepilogo delle funzioni direttamente all'interno dell'app.*
 3. **Avvio Gara**: Clicca su **START** per attivare il cronometro e sbloccare le schede degli atleti.
 4. **Pressione Schede**: Durante la gara, un clic sulla "card" dell'atleta o sul tasto del gruppo gestirà la detrazione del giro e aggiornerà il database di log con lo stampaggio del tempo corrente.
 5. **Fine**: A completamento giri, la card indicherà l'arrivo al traguardo ("Arrivo").
@@ -63,6 +65,17 @@ Essendo un'applicazione client-side (senza backend dedicato), l'utilizzo è imme
 
 File originale di riferimento: `garav2.html`. 
 La versione `v2` introduce aggiornamenti di quality-of-life come la comoda funzionalità di *Mass Upate* per alleggerire il carico al giudice al passaggio del gruppo compatto.
+
+Questo progetto è distribuito sotto licenza **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)**.
+
+[![CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+
+In sintesi, sei libero di condividere e modificare questo materiale, a condizione che:
+1. **Attribuzione**: Riconosci il credito adeguato all'autore originale.
+2. **Non Commerciale**: Non utilizzi il materiale per scopi commerciali o per trarne profitto.
+3. **Condividi allo Stesso Modo**: Se modifichi il materiale, devi distribuire i tuoi contributi con la stessa licenza dell'originale.
+
+Per maggiori dettagli, consulta il file `LICENSE` incluso in questo repository o visita il [sito ufficiale Creative Commons](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 ## 🤝 Contributi
 
