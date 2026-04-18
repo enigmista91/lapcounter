@@ -16,6 +16,7 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
   - Ogni atleta ha una "scheda" dedicata cliccabile.
   - Ad ogni clic, il contatore dei giri decresce e viene registrato il tempo di passaggio.
   - Segnalazione automatica di **Campana** (ultimo giro) e **Arrivo** a fine gara.
+  - Possibilità di **Ritirare un Atleta** a gara in corso tramite l'apposito pulsante: l'atleta non scalerà più giri e verrà classificato con lo stato di **DNF** (Did Not Finish).
 - **Aggiornamento di Gruppo (Mass Update)**:
   - Un bottone dedicato permette di scalare contemporaneamente un giro a tutti gli atleti attivi. Perfetto per gestire gruppi compatti.
 - **Log degli Eventi**: 
@@ -46,6 +47,7 @@ Essendo un'applicazione client-side (senza backend dedicato), l'utilizzo è imme
    - Inserisci la lista dei pettorali nella barra di testo iniziale (es: `1,2,5,10,23`).
    - Seleziona/inserisci la distanza desiderata.
    - Conferma la configurazione, passando alla dashboard di gara.
+   - *Nota: è disponibile un pulsante **Guida all'uso** per un rapido riepilogo delle funzioni direttamente all'interno dell'app.*
 3. **Avvio Gara**: Clicca su **START** per attivare il cronometro e sbloccare le schede degli atleti.
 4. **Pressione Schede**: Durante la gara, un clic sulla "card" dell'atleta o sul tasto del gruppo gestirà la detrazione del giro e aggiornerà il database di log con lo stampaggio del tempo corrente.
 5. **Fine**: A completamento giri, la card indicherà l'arrivo al traguardo ("Arrivo").
