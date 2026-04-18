@@ -651,6 +651,7 @@
                 <span id="race-info"></span>
                 <button class="btn-edit" onclick="resetRace()">Reset</button>
                 <button class="btn-group-action" onclick="massLapUpdate()">Tutti -1 Giro</button>
+                <button class="btn-stop" onclick="withdrawRunner()" style="margin-left: 10px; font-size: 0.8rem; padding: 4px 8px; min-width: auto; background-color: #e74c3c; color: white;">Ritira Atleta</button>
                 <button class="btn-whatsapp" onclick="shareToWhatsApp()">Condividi su WhatsApp</button>
                 <button class="btn-email" onclick="shareToEmail()">Invia via Email</button>
                 <button class="btn-print" onclick="printLeaderboard()">Stampa Classifica</button>
@@ -876,6 +877,38 @@
             });
         }
 
+
+        function withdrawRunner() {
+            if (!isRunning) return alert("Avvia prima il cronometro!");
+            const bibToWithdraw = prompt("Inserisci il pettorale dell'atleta da ritirare:");
+            if (!bibToWithdraw) return;
+
+            const runner = raceConfig.runners.find(r => r.id === bibToWithdraw.trim());
+            if (!runner) {
+                return alert("Pettorale non trovato!");
+            }
+            if (runner.finished) {
+                return alert("Questo atleta ha gi\xe0 concluso la gara o \xe8 gi\xe0 ritirato!");
+            }
+
+            if (confirm("Sei sicuro di voler ritirare l'atleta " + runner.id + "?")) {
+                runner.withdrawn = true;
+                runner.finished = true;
+
+                const timeString = formatTime(elapsedTime);
+                addLogEntry(runner.id, runner.lapsDone, 'withdrawn', timeString);
+                saveCurrentState();
+
+                renderRunners();
+                if (!document.getElementById('lap-details-section').classList.contains('hidden')) {
+                    renderLapDetails();
+                }
+                if (!document.getElementById('leaderboard-section').classList.contains('hidden')) {
+                    renderLeaderboard();
+                }
+            }
+        }
+
         // FIX 2: Funzione per scalare giri a tutti
         function massLapUpdate() {
             if(!isRunning) return alert("Avvia prima il cronometro!");
@@ -960,6 +993,14 @@
                 li.classList.add('log-last');
                 statusText = "CAMPANA";
             } else if (type === 'finish') {
+                li.classList.add('log-finish');
+                statusText = "ARRIVO";
+            } else if (type === 'withdrawn') {
+                li.classList.add('log-finish');
+                statusText = "RITIRATO";
+                li.style.backgroundColor = '#f2dede';
+                li.style.color = '#a94442';
+            } else if (false) {
                 li.classList.add('log-finish');
                 statusText = "ARRIVO";
             }
@@ -1221,6 +1262,8 @@
 
                     if (index === 0) {
                         tdGap.textContent = "-";
+                    } else if (runner.withdrawn) {
+                        tdGap.textContent = "DNF";
                     } else {
                         if (runner.lapsDone === leader.lapsDone) {
                             // Same lap count, calculate time difference
