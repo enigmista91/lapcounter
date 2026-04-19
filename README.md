@@ -1,24 +1,26 @@
 # Contagiri Atletica (garav2)
 
-**Contagiri Atletica** è una semplice ma potente applicazione web a pagina singola sviluppata in HTML, CSS e JavaScript per la gestione e il tracciamento dei giri durante le gare di atletica leggera su pista. 
+**Contagiri Atletica** è una semplice ma potente applicazione web a pagina singola sviluppata in HTML, CSS e JavaScript per la gestione e il tracciamento dei giri durante le gare di atletica leggera su pista.
 
 L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atleti contemporaneamente, registrando passaggi, calcolando i giri mancanti e gestendo sia aggiornamenti individuali che di gruppo.
 
 ## ✨ Funzionalità Principali
 
-- **Configurazione Gara**: 
+- **Configurazione Gara**:
   - Inserimento dei pettorali degli atleti partecipanti (separati da virgola).
   - Controllo automatico anti-duplicati durante l'inserimento dei pettorali.
   - Impostazione della distanza totale della gara.
   - Calcolo automatico del numero di giri/passaggi previsti.
+  - Guida all'uso integrata per assistere nella configurazione e nell'utilizzo.
 - **Cronometro Integrato**: Display in tempo reale (`MM:SS.ms`) del tempo trascorso dall'inizio della gara.
 - **Gestione Atleti (Individuale)**:
   - Ogni atleta ha una "scheda" dedicata cliccabile.
   - Ad ogni clic, il contatore dei giri decresce e viene registrato il tempo di passaggio.
   - Segnalazione automatica di **Campana** (ultimo giro) e **Arrivo** a fine gara.
+  - Funzionalità di ritiro atleta in caso di abbandono della gara.
 - **Aggiornamento di Gruppo (Mass Update)**:
   - Un bottone dedicato permette di scalare contemporaneamente un giro a tutti gli atleti attivi. Perfetto per gestire gruppi compatti.
-- **Log degli Eventi**: 
+- **Log degli Eventi**:
   - Registrazione cronologica sul display laterale/inferiore di ogni singolo passaggio, arrivo o aggiornamento collettivo, mantenendo trasparenza sull'evoluzione cronometrica.
 - **Classifica in Tempo Reale**:
   - Modalità "Mostra Classifica" attivabile con apposito bottone a gara in corso.
@@ -61,14 +63,15 @@ Essendo un'applicazione client-side (senza backend dedicato), l'utilizzo è imme
 
 ## 📄 Licenza / Note
 
-File originale di riferimento: `garav2.html`. 
-La versione `v2` introduce aggiornamenti di quality-of-life come la comoda funzionalità di *Mass Upate* per alleggerire il carico al giudice al passaggio del gruppo compatto.
+File originale di riferimento: `garav2.html`.
+La versione `v2` introduce aggiornamenti di quality-of-life come la comoda funzionalità di _Mass Upate_ per alleggerire il carico al giudice al passaggio del gruppo compatto.
 
 Questo progetto è distribuito sotto licenza **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)**.
 
 [![CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
 In sintesi, sei libero di condividere e modificare questo materiale, a condizione che:
+
 1. **Attribuzione**: Riconosci il credito adeguato all'autore originale.
 2. **Non Commerciale**: Non utilizzi il materiale per scopi commerciali o per trarne profitto.
 3. **Condividi allo Stesso Modo**: Se modifichi il materiale, devi distribuire i tuoi contributi con la stessa licenza dell'originale.
