@@ -26,6 +26,7 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
   - Modalità "Mostra Classifica" attivabile con apposito bottone a gara in corso.
   - Ordinamento dinamico per atleti completati, numero di giri e tempo.
   - Calcolo del distacco per atleti nello stesso giro e stato (DNS se 0 giri).
+- **Dettaglio Giri in Tempo Reale**: Visualizzazione dinamica, a gara in corso, dei tempi totali e parziali di ogni singolo giro per tutti gli atleti.
 - **Condivisione e Stampa**:
   - Condivisione istantanea della classifica della gara in corso (o archiviata) via **WhatsApp** ed **Email**.
   - Funzione **Stampa Classifica** per generare un foglio pulito ed essenziale, ottimizzato per la stampa, con la classifica finale o parziale.
