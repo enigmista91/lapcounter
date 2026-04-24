@@ -791,7 +791,7 @@
             if (!bibsInput || !distInput) return alert("Dati mancanti!");
 
             // FIX 1: Arrotondamento per difetto (Math.floor)
-            const calculatedLaps = Math.ceil(distInput / trackInput);
+            const calculatedLaps = Math.ceil(distInput / trackInput) - 1;
 
             if(calculatedLaps < 1) return alert("La distanza è troppo breve per un giro!");
 
