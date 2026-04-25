@@ -1,0 +1,24 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "**Contagiri Atletica** è una semplice ma potente applicazione web a pagina singola sviluppata in HTML, CSS e JavaScript per la gestione e il tracciamento dei giri durante le gare di atletica leggera su pista.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/enigmista91/lapcounter.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/enigmista91/lapcounter/issues"
+  },
+  "homepage": "https://github.com/enigmista91/lapcounter#readme",
+  "dependencies": {
+    "playwright": "^1.59.1"
+  }
+}
