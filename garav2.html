@@ -164,7 +164,7 @@
 
         .runners-grid {
             display: grid;
-            /* FIX 3: Caselle più piccole (min 100px invece di 130px) */
+            /* FIX 3: Caselle pi\xf9 piccole (min 100px invece di 130px) */
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 8px;
         }
@@ -189,6 +189,14 @@
             .runner-card:active:not(.disabled) {
                 transform: scale(0.95);
             }
+
+
+        .runner-distance {
+            font-size: 0.8em;
+            color: #666;
+            margin: 2px 0;
+            font-weight: bold;
+        }
 
         .runner-number {
             font-size: 1.8rem; /* Font ridotto */
@@ -793,7 +801,7 @@
             // FIX 1: Arrotondamento per difetto (Math.floor)
             const calculatedLaps = Math.ceil(distInput / trackInput);
 
-            if(calculatedLaps < 1) return alert("La distanza è troppo breve per un giro!");
+            if(calculatedLaps < 1) return alert("La distanza \xe8 troppo breve per un giro!");
 
             const bibsArray = bibsInput.split(',').map(s => s.trim()).filter(s => s !== "");
 
@@ -867,6 +875,14 @@
                 numberSpan.textContent = runner.id;
                 btn.appendChild(numberSpan);
 
+                if (runner.lapsDone > 0) {
+                    const distanceDiv = document.createElement('div');
+                    distanceDiv.className = 'runner-distance';
+                    const distanceDone = raceConfig.dist - (lapsRemaining * raceConfig.type);
+                    distanceDiv.textContent = distanceDone + 'm';
+                    btn.appendChild(distanceDiv);
+                }
+
                 const lapsDiv = document.createElement('div');
                 lapsDiv.className = 'runner-laps';
                 lapsDiv.innerHTML = `<b>${lapsRemaining}</b> giri`;
@@ -920,7 +936,7 @@
             // Aggiorna lo stato di tutti i corridori attivi
             raceConfig.runners.forEach(runner => {
                 if (!runner.finished) {
-                    processRunnerLap(runner, currentTime, true); // true = è un aggiornamento di gruppo
+                    processRunnerLap(runner, currentTime, true); // true = \xe8 un aggiornamento di gruppo
                     updatedCount++;
                 }
             });
@@ -971,7 +987,7 @@
                 logType = 'finish';
             }
 
-            // Se è un aggiornamento di gruppo, non spammiamo il log con ogni singolo atleta,
+            // Se \xe8 un aggiornamento di gruppo, non spammiamo il log con ogni singolo atleta,
             // ma registriamo comunque se qualcuno finisce o va all'ultimo giro per chiarezza
             if (!isMassUpdate || logType !== 'normal') {
                 addLogEntry(runner.id, runner.lapsDone, logType, timeString);
