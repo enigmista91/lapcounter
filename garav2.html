@@ -797,10 +797,19 @@
 
             const bibsArray = bibsInput.split(',').map(s => s.trim()).filter(s => s !== "");
 
+            // Controllo che i pettorali siano solo numerici
+            const nonNumeric = bibsArray.filter(bib => !/^\d+$/.test(bib));
+            if (nonNumeric.length > 0) {
+                return alert("Inserire solo numeri validi per i pettorali!");
+            }
+
             const uniqueBibs = new Set(bibsArray);
             if (uniqueBibs.size !== bibsArray.length) {
                 return alert("Pettorali duplicati rilevati!");
             }
+
+            // Ordina i pettorali numericamente
+            bibsArray.sort((a, b) => parseInt(a) - parseInt(b));
 
             raceConfig.totalLaps = calculatedLaps;
             raceConfig.runners = bibsArray.map(bib => ({ id: bib, lapsDone: 0, finished: false, lapTimes: [] }));
