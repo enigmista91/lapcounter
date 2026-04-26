@@ -203,6 +203,17 @@
             margin-top: 4px;
         }
 
+        .runner-card.bell-lap-warning {
+            background-color: #f39c12;
+            border-color: #e67e22;
+            color: white;
+            animation: pulse-orange 2s infinite;
+        }
+
+            .runner-card.bell-lap-warning .runner-laps {
+                color: #ffe;
+            }
+
         .runner-card.last-lap {
             background-color: var(--danger-color);
             border-color: darkred;
@@ -216,6 +227,20 @@
 
         .runner-card.finished {
             display: none;
+        }
+
+        @keyframes pulse-orange {
+            0% {
+                box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 8px rgba(243, 156, 18, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(243, 156, 18, 0);
+            }
         }
 
         @keyframes pulse {
@@ -860,7 +885,11 @@
                 btn.className = isRunning ? 'runner-card' : 'runner-card disabled';
                 const lapsRemaining = raceConfig.totalLaps - runner.lapsDone;
 
-                if (lapsRemaining === 1) btn.classList.add('last-lap');
+                if (lapsRemaining === 1) {
+                    btn.classList.add('last-lap');
+                } else if (lapsRemaining === 2) {
+                    btn.classList.add('bell-lap-warning');
+                }
 
                 const numberSpan = document.createElement('span');
                 numberSpan.className = 'runner-number';
