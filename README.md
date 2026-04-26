@@ -10,6 +10,7 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
   - Inserimento dei pettorali degli atleti partecipanti (separati da virgola).
   - Controllo automatico anti-duplicati durante l'inserimento dei pettorali.
   - Impostazione della distanza totale della gara.
+  - Scelta della lunghezza della pista (es. 400m o 200m).
   - Calcolo automatico del numero di giri/passaggi previsti.
   - Guida all'uso integrata per assistere nella configurazione e nell'utilizzo.
 - **Cronometro Integrato**: Display in tempo reale (`MM:SS.ms`) del tempo trascorso dall'inizio della gara.
