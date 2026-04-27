@@ -8,6 +8,8 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
 
 - **Configurazione Gara**:
   - Inserimento dei pettorali degli atleti partecipanti (separati da virgola).
+  - Validazione rigorosa numerica per l'inserimento dei pettorali.
+  - Ordinamento automatico in ordine crescente dei pettorali in gara.
   - Controllo automatico anti-duplicati durante l'inserimento dei pettorali.
   - Impostazione della distanza totale della gara.
   - Scelta della lunghezza della pista (es. 400m o 200m).
@@ -17,7 +19,7 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
 - **Gestione Atleti (Individuale)**:
   - Ogni atleta ha una "scheda" dedicata cliccabile.
   - Ad ogni clic, il contatore dei giri decresce e viene registrato il tempo di passaggio.
-  - Segnalazione automatica di **Campana** (ultimo giro) e **Arrivo** a fine gara.
+  - Segnalazione visiva di **Preavviso Campana** (2 giri alla fine) e automatica di **Campana** (ultimo giro) e **Arrivo** a fine gara.
   - Funzionalità di ritiro atleta in caso di abbandono della gara.
 - **Aggiornamento di Gruppo (Mass Update)**:
   - Un bottone dedicato permette di scalare contemporaneamente un giro a tutti gli atleti attivi. Perfetto per gestire gruppi compatti.
