@@ -41,7 +41,9 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
   - Sezione dedicata per consultare lo storico delle corse passate.
   - Possibilità di visualizzare la **Classifica Finale** e il **Dettaglio Passaggi** (tempi sul giro) per ogni singolo atleta archiviato.
   - Gestione dell'archivio (eliminazione singola gara o svuotamento totale).
-- **Reset e Sicurezza**: Conferme prima dell'esecuzione di azioni ad alto impatto (es. Reset totale della gara o Mass Update) per prevenire clic accidentali.
+- **Reset e Sicurezza**:
+  - Conferme prima dell'esecuzione di azioni ad alto impatto (es. Reset totale della gara o Mass Update) per prevenire clic accidentali.
+  - Prevenzione delle vulnerabilità XSS per un inserimento e una visualizzazione sicura dei dati.
 
 ## 🚀 Utilizzo
 
@@ -64,6 +66,7 @@ Essendo un'applicazione client-side (senza backend dedicato), l'utilizzo è imme
 - **UI/Struttura**: HTML5
 - **Stilizzazione**: CSS in linea / StyleSheet interno (Colori flat pastello, modalità Responsive parziale, interazioni base).
 - **Logica**: Vanilla JavaScript (Gestione intervalli timer, manipolazione DOM, elaborazione array atleti, stato dinamico a singola pagina).
+- **Deploy Automatico**: Integrazione con GitHub Actions per il deploy FTP automatico a ogni aggiornamento del branch principale.
 
 ## 📄 Licenza / Note
 
