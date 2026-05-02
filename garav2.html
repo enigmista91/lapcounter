@@ -190,6 +190,14 @@
                 transform: scale(0.95);
             }
 
+
+        .runner-distance {
+            font-size: 0.8em;
+            color: #666;
+            margin: 2px 0;
+            font-weight: bold;
+        }
+
         .runner-number {
             font-size: 1.8rem; /* Font ridotto */
             font-weight: bold;
@@ -859,11 +867,11 @@
         }
 
         function resetRace() {
-            if(confirm("Vuoi resettare tutto? Questa gara verr\xe0 archiviata (se ci sono passaggi).")) {
+            if(confirm("Vuoi resettare tutto? Questa gara verrà archiviata (se ci sono passaggi).")) {
                 clearInterval(timerInterval);
                 isRunning = false;
 
-                // Archivia la gara se c'\xe8 almeno un passaggio
+                // Archivia la gara se c'è almeno un passaggio
                 if (raceConfig && raceConfig.runners.some(r => r.lapsDone > 0)) {
                     archiveCurrentRace();
                 }
@@ -905,6 +913,14 @@
                 numberSpan.textContent = runner.id;
                 btn.appendChild(numberSpan);
 
+                if (runner.lapsDone > 0) {
+                    const distanceDiv = document.createElement('div');
+                    distanceDiv.className = 'runner-distance';
+                    const distanceDone = raceConfig.dist - (lapsRemaining * raceConfig.type);
+                    distanceDiv.textContent = distanceDone + 'm';
+                    btn.appendChild(distanceDiv);
+                }
+
                 const lapsDiv = document.createElement('div');
                 lapsDiv.className = 'runner-laps';
                 lapsDiv.innerHTML = `<b>${lapsRemaining}</b> giri`;
@@ -926,7 +942,7 @@
                 return alert("Pettorale non trovato!");
             }
             if (runner.finished) {
-                return alert("Questo atleta ha gi\xe0 concluso la gara o \xe8 gi\xe0 ritirato!");
+                return alert("Questo atleta ha già concluso la gara o è già ritirato!");
             }
 
             if (confirm("Sei sicuro di voler ritirare l'atleta " + runner.id + "?")) {
@@ -1155,7 +1171,7 @@
         function printLeaderboard() {
             const section = document.getElementById('leaderboard-section');
             if (section.classList.contains('hidden')) {
-                // Se non \xe8 visibile, la apriamo e la renderizziamo prima di stampare
+                // Se non è visibile, la apriamo e la renderizziamo prima di stampare
                 section.classList.remove('hidden');
                 renderLeaderboard();
             }
