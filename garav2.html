@@ -164,7 +164,7 @@
 
         .runners-grid {
             display: grid;
-            /* FIX 3: Caselle pi\xf9 piccole (min 100px invece di 130px) */
+            /* FIX 3: Caselle più piccole (min 100px invece di 130px) */
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 8px;
         }
@@ -801,7 +801,7 @@
             // FIX 1: Arrotondamento per difetto (Math.floor)
             const calculatedLaps = Math.ceil(distInput / trackInput);
 
-            if(calculatedLaps < 1) return alert("La distanza \xe8 troppo breve per un giro!");
+            if(calculatedLaps < 1) return alert("La distanza è troppo breve per un giro!");
 
             const bibsArray = bibsInput.split(',').map(s => s.trim()).filter(s => s !== "");
 
@@ -833,11 +833,11 @@
         }
 
         function resetRace() {
-            if(confirm("Vuoi resettare tutto? Questa gara verr\xe0 archiviata (se ci sono passaggi).")) {
+            if(confirm("Vuoi resettare tutto? Questa gara verrà archiviata (se ci sono passaggi).")) {
                 clearInterval(timerInterval);
                 isRunning = false;
 
-                // Archivia la gara se c'\xe8 almeno un passaggio
+                // Archivia la gara se c'è almeno un passaggio
                 if (raceConfig && raceConfig.runners.some(r => r.lapsDone > 0)) {
                     archiveCurrentRace();
                 }
@@ -904,7 +904,7 @@
                 return alert("Pettorale non trovato!");
             }
             if (runner.finished) {
-                return alert("Questo atleta ha gi\xe0 concluso la gara o \xe8 gi\xe0 ritirato!");
+                return alert("Questo atleta ha già concluso la gara o è già ritirato!");
             }
 
             if (confirm("Sei sicuro di voler ritirare l'atleta " + runner.id + "?")) {
@@ -936,7 +936,7 @@
             // Aggiorna lo stato di tutti i corridori attivi
             raceConfig.runners.forEach(runner => {
                 if (!runner.finished) {
-                    processRunnerLap(runner, currentTime, true); // true = \xe8 un aggiornamento di gruppo
+                    processRunnerLap(runner, currentTime, true); // true = è un aggiornamento di gruppo
                     updatedCount++;
                 }
             });
@@ -987,7 +987,7 @@
                 logType = 'finish';
             }
 
-            // Se \xe8 un aggiornamento di gruppo, non spammiamo il log con ogni singolo atleta,
+            // Se è un aggiornamento di gruppo, non spammiamo il log con ogni singolo atleta,
             // ma registriamo comunque se qualcuno finisce o va all'ultimo giro per chiarezza
             if (!isMassUpdate || logType !== 'normal') {
                 addLogEntry(runner.id, runner.lapsDone, logType, timeString);
@@ -1133,7 +1133,7 @@
         function printLeaderboard() {
             const section = document.getElementById('leaderboard-section');
             if (section.classList.contains('hidden')) {
-                // Se non \xe8 visibile, la apriamo e la renderizziamo prima di stampare
+                // Se non è visibile, la apriamo e la renderizziamo prima di stampare
                 section.classList.remove('hidden');
                 renderLeaderboard();
             }
