@@ -665,6 +665,18 @@
                     <option value="200">200m</option>
                 </select>
             </div>
+            <div class="input-group">
+                <label>Data Gara</label>
+                <input type="date" id="race-date" style="width: 130px;">
+            </div>
+            <div class="input-group">
+                <label>Ora Gara</label>
+                <input type="time" id="race-time" style="width: 100px;">
+            </div>
+            <div class="input-group">
+                <label>Nome Meeting</label>
+                <input type="text" id="race-meeting" placeholder="Opzionale">
+            </div>
             <button class="btn-primary" onclick="initRace()">Crea</button>
             <button class="btn-edit" onclick="showArchive()" style="margin-left: 10px;">Storico Gare</button>
             <button class="btn-primary" onclick="openGuideModal()" style="margin-left: 10px; background-color: #2ecc71;">Guida all'uso</button>
@@ -861,8 +873,14 @@
             raceConfig.date = new Date().toISOString();
             raceConfig.dist = distInput;
             raceConfig.type = trackInput;
+            const raceDateInput = document.getElementById('race-date').value;
+            const raceTimeInput = document.getElementById('race-time').value;
+            const raceMeetingInput = document.getElementById('race-meeting').value;
+            raceConfig.raceDate = raceDateInput;
+            raceConfig.raceTime = raceTimeInput;
+            raceConfig.raceMeeting = raceMeetingInput;
 
-            document.getElementById('race-info').innerHTML = `<b>${distInput}m</b> (${calculatedLaps} passaggi)`;
+            document.getElementById('race-info').innerHTML = `<b>${distInput}m</b> (${calculatedLaps} passaggi) | <b>Data:</b> ${raceDateInput || 'non inserito'} ${raceTimeInput ? raceTimeInput : ''} | <b>Meeting:</b> ${raceMeetingInput || 'non inserito'}`;
             document.getElementById('setup-panel').classList.add('hidden');
             document.getElementById('active-race-header').classList.remove('hidden');
             document.getElementById('race-interface').classList.remove('hidden');
@@ -1392,7 +1410,7 @@
             }
 
             document.getElementById('race-info').innerHTML =
-                `<b>Distanza:</b> ${raceConfig.dist}m | <b>Pista:</b> ${raceConfig.type}m | <b>Tot. Giri:</b> ${raceConfig.totalLaps}`;
+                `<b>Distanza:</b> ${raceConfig.dist}m | <b>Pista:</b> ${raceConfig.type}m | <b>Tot. Giri:</b> ${raceConfig.totalLaps} | <b>Data:</b> ${raceConfig.raceDate || 'non inserito'} ${raceConfig.raceTime ? raceConfig.raceTime : ''} | <b>Meeting:</b> ${raceConfig.raceMeeting || 'non inserito'}`;
 
             // Show UI
             document.getElementById('setup-panel').classList.add('hidden');
@@ -1464,7 +1482,11 @@
                 div.style.alignItems = "center";
 
                 const info = document.createElement('div');
-                info.innerHTML = `<strong>Data:</strong> ${dateStr} <br>
+                const meetingStr = archivedRace.raceMeeting || 'non inserito';
+                const raceDateStr = archivedRace.raceDate ? archivedRace.raceDate + (archivedRace.raceTime ? ' ' + archivedRace.raceTime : '') : 'non inserito';
+                info.innerHTML = `<strong>Data Creazione:</strong> ${dateStr} <br>
+                                  <strong>Data Gara:</strong> ${raceDateStr} <br>
+                                  <strong>Meeting:</strong> ${meetingStr} <br>
                                   <strong>Distanza:</strong> ${archivedRace.dist}m (${archivedRace.type}m pista) <br>
                                   <strong>Partecipanti:</strong> ${archivedRace.runners.length}`;
 
