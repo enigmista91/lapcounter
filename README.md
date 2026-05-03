@@ -14,6 +14,7 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
   - Impostazione della distanza totale della gara.
   - Scelta della lunghezza della pista (es. 400m o 200m).
   - Calcolo automatico del numero di giri/passaggi previsti.
+  - Inserimento opzionale di Data Gara, Ora e Nome del Meeting per una migliore archiviazione.
   - Guida all'uso integrata per assistere nella configurazione e nell'utilizzo.
 - **Cronometro Integrato**: Display in tempo reale (`MM:SS.ms`) del tempo trascorso dall'inizio della gara.
 - **Gestione Atleti (Individuale)**:
