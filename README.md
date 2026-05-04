@@ -18,6 +18,7 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
   - Guida all'uso integrata per assistere nella configurazione e nell'utilizzo.
 - **Cronometro Integrato**: Display in tempo reale (`MM:SS.ms`) del tempo trascorso dall'inizio della gara.
 - **Gestione Atleti (Individuale)**:
+  - Visualizzazione dinamica della distanza percorsa sulla scheda.
   - Ogni atleta ha una "scheda" dedicata cliccabile.
   - Ad ogni clic, il contatore dei giri decresce e viene registrato il tempo di passaggio.
   - Segnalazione visiva di **Preavviso Campana** (2 giri alla fine) e automatica di **Campana** (ultimo giro) e **Arrivo** a fine gara.
@@ -68,6 +69,7 @@ Essendo un'applicazione client-side (senza backend dedicato), l'utilizzo è imme
 - **Stilizzazione**: CSS in linea / StyleSheet interno (Colori flat pastello, modalità Responsive parziale, interazioni base).
 - **Logica**: Vanilla JavaScript (Gestione intervalli timer, manipolazione DOM, elaborazione array atleti, stato dinamico a singola pagina).
 - **Deploy Automatico**: Integrazione con GitHub Actions per il deploy FTP automatico a ogni aggiornamento del branch principale.
+- **Link al Progetto**: E' presente un link diretto a GitHub nel footer dell'applicazione.
 
 ## 📄 Licenza / Note
 
