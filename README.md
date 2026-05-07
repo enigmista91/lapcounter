@@ -22,6 +22,7 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
   - Ogni atleta ha una "scheda" dedicata cliccabile.
   - Ad ogni clic, il contatore dei giri decresce e viene registrato il tempo di passaggio.
   - Segnalazione visiva di **Preavviso Campana** (2 giri alla fine) e automatica di **Campana** (ultimo giro) e **Arrivo** a fine gara.
+  - Visualizzazione in tempo reale della **Distanza Coperta** calcolata dinamicamente in base ai giri effettuati e alla lunghezza della pista.
   - Funzionalità di ritiro atleta in caso di abbandono della gara.
 - **Aggiornamento di Gruppo (Mass Update)**:
   - Un bottone dedicato permette di scalare contemporaneamente un giro a tutti gli atleti attivi. Perfetto per gestire gruppi compatti.
@@ -73,6 +74,7 @@ Essendo un'applicazione client-side (senza backend dedicato), l'utilizzo è imme
 ## 📄 Licenza / Note
 
 File originale di riferimento: `garav2.html`.
+Inoltre, il footer dell'applicazione include un collegamento diretto a questo repository GitHub per facilitare l'accesso al codice sorgente e la segnalazione di problemi.
 La versione `v2` introduce aggiornamenti di quality-of-life come la comoda funzionalità di _Mass Upate_ per alleggerire il carico al giudice al passaggio del gruppo compatto.
 
 Questo progetto è distribuito sotto licenza **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)**.
