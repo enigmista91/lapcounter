@@ -668,7 +668,7 @@
                     <option value="200">200m</option>
                 </select>
             </div>
-            <div class="input-group" style="display: flex; flex-direction: column; align-items: flex-start; margin-left: 10px;">
+            <div class="input-group steeplechase-group" style="display: none; flex-direction: column; align-items: flex-start; margin-left: 10px;">
                 <div>
                     <input type="checkbox" id="is-steeplechase" onchange="toggleSteeplechaseOptions()">
                     <label for="is-steeplechase" style="display: inline; font-weight: normal; margin-left: 5px;">Gara con siepi</label>
@@ -876,7 +876,7 @@
             // FIX 1: Arrotondamento per difetto (Math.floor) - o arrotondamento all'eccesso per i giri totali
             const calculatedLaps = Math.ceil(distInput / trackInput);
 
-            if(calculatedLaps < 1) return alert("La distanza \xe8 troppo breve per un giro!");
+            if(calculatedLaps < 1) return alert("La distanza \u00E8 troppo breve per un giro!");
 
             const bibsArray = bibsInput.split(',').map(s => s.trim()).filter(s => s !== "");
 
@@ -1562,6 +1562,29 @@
             };
             list.appendChild(btnClearAll);
         }
+
+        // Event listener per mostrare "Gara con siepi" solo se la distanza \xe8 2000 o 3000
+        document.getElementById('distance').addEventListener('input', function() {
+            const dist = parseInt(this.value);
+            const steeplechaseGroup = document.querySelector('.steeplechase-group');
+            const isSteeplechaseCheckbox = document.getElementById('is-steeplechase');
+
+            if (dist === 2000 || dist === 3000) {
+                steeplechaseGroup.style.display = 'flex';
+            } else {
+                steeplechaseGroup.style.display = 'none';
+                // Resetta anche i valori se viene nascosto
+                if (isSteeplechaseCheckbox.checked) {
+                    isSteeplechaseCheckbox.checked = false;
+                    toggleSteeplechaseOptions();
+                }
+            }
+        });
+
+        // Trigger the check once on load to ensure proper initial state
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('distance').dispatchEvent(new Event('input'));
+        });
 
         function toggleSteeplechaseOptions() {
             const isChecked = document.getElementById('is-steeplechase').checked;
