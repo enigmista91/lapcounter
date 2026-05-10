@@ -668,6 +668,19 @@
                     <option value="200">200m</option>
                 </select>
             </div>
+            <div class="input-group" style="display: flex; flex-direction: column; align-items: flex-start; margin-left: 10px;">
+                <div>
+                    <input type="checkbox" id="is-steeplechase" onchange="toggleSteeplechaseOptions()">
+                    <label for="is-steeplechase" style="display: inline; font-weight: normal; margin-left: 5px;">Gara con siepi</label>
+                </div>
+                <div id="steeplechase-options" style="display: none; margin-top: 5px;">
+                    <label style="font-weight: normal; margin-right: 5px;">Riviera:</label>
+                    <select id="steeplechase-type">
+                        <option value="interna">Interna (390m)</option>
+                        <option value="esterna">Esterna (410m)</option>
+                    </select>
+                </div>
+            </div>
             <div class="input-group">
                 <label>Data Gara</label>
                 <input type="date" id="race-date" style="width: 130px;">
@@ -845,14 +858,25 @@
         function initRace() {
             const bibsInput = document.getElementById('bibs').value;
             const distInput = parseInt(document.getElementById('distance').value);
-            const trackInput = parseInt(document.getElementById('track-type').value);
+
+            let trackInput = parseInt(document.getElementById('track-type').value);
+            const isSteeplechase = document.getElementById('is-steeplechase') && document.getElementById('is-steeplechase').checked;
+
+            if (isSteeplechase) {
+                const steeplechaseType = document.getElementById('steeplechase-type').value;
+                if (steeplechaseType === 'interna') {
+                    trackInput = 390;
+                } else if (steeplechaseType === 'esterna') {
+                    trackInput = 410;
+                }
+            }
 
             if (!bibsInput || !distInput) return alert("Dati mancanti!");
 
-            // FIX 1: Arrotondamento per difetto (Math.floor)
+            // FIX 1: Arrotondamento per difetto (Math.floor) - o arrotondamento all'eccesso per i giri totali
             const calculatedLaps = Math.ceil(distInput / trackInput);
 
-            if(calculatedLaps < 1) return alert("La distanza è troppo breve per un giro!");
+            if(calculatedLaps < 1) return alert("La distanza \xe8 troppo breve per un giro!");
 
             const bibsArray = bibsInput.split(',').map(s => s.trim()).filter(s => s !== "");
 
@@ -1537,6 +1561,20 @@
                 }
             };
             list.appendChild(btnClearAll);
+        }
+
+        function toggleSteeplechaseOptions() {
+            const isChecked = document.getElementById('is-steeplechase').checked;
+            const optionsDiv = document.getElementById('steeplechase-options');
+            const trackTypeSelect = document.getElementById('track-type');
+
+            if (isChecked) {
+                optionsDiv.style.display = 'block';
+                trackTypeSelect.disabled = true;
+            } else {
+                optionsDiv.style.display = 'none';
+                trackTypeSelect.disabled = false;
+            }
         }
 
         function deleteArchivedRace(index) {
