@@ -876,7 +876,7 @@
             // FIX 1: Arrotondamento per difetto (Math.floor) - o arrotondamento all'eccesso per i giri totali
             const calculatedLaps = Math.ceil(distInput / trackInput);
 
-            if(calculatedLaps < 1) return alert("La distanza \xe8 troppo breve per un giro!");
+            if(calculatedLaps < 1) return alert("La distanza \u00E8 troppo breve per un giro!");
 
             const bibsArray = bibsInput.split(',').map(s => s.trim()).filter(s => s !== "");
 
