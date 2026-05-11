@@ -876,7 +876,7 @@
             // FIX 1: Arrotondamento per difetto (Math.floor) - o arrotondamento all'eccesso per i giri totali
             const calculatedLaps = Math.ceil(distInput / trackInput);
 
-            if(calculatedLaps < 1) return alert("La distanza \xe8 troppo breve per un giro!");
+            if(calculatedLaps < 1) return alert("La distanza è troppo breve per un giro!");
 
             const bibsArray = bibsInput.split(',').map(s => s.trim()).filter(s => s !== "");
 
@@ -1563,7 +1563,7 @@
             list.appendChild(btnClearAll);
         }
 
-        // Event listener per mostrare "Gara con siepi" solo se la distanza \xe8 2000 o 3000
+        // Event listener per mostrare "Gara con siepi" solo se la distanza è 2000 o 3000
         document.getElementById('distance').addEventListener('input', function() {
             const dist = parseInt(this.value);
             const steeplechaseGroup = document.querySelector('.steeplechase-group');
