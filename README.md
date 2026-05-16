@@ -7,6 +7,7 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
 ## ✨ Funzionalità Principali
 
 - **Configurazione Gara**:
+  - Supporto per **Gare con Siepi** (Steeplechase), con gestione opzionale di Fossa Interna (390m di sviluppo pista) e Fossa Esterna (410m di sviluppo pista).
   - Inserimento dei pettorali degli atleti partecipanti (separati da virgola).
   - Validazione rigorosa numerica per l'inserimento dei pettorali.
   - Ordinamento automatico in ordine crescente dei pettorali in gara.
