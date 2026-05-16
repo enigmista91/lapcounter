@@ -14,6 +14,7 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
   - Controllo automatico anti-duplicati durante l'inserimento dei pettorali.
   - Impostazione della distanza totale della gara.
   - Scelta della lunghezza della pista (es. 400m o 200m).
+  - Supporto per gare con siepi (2000m e 3000m) con calcolo dei passaggi differenziato per Riviera Interna o Esterna.
   - Calcolo automatico del numero di giri/passaggi previsti.
   - Inserimento opzionale di Data Gara, Ora e Nome del Meeting per una migliore archiviazione.
   - Guida all'uso integrata per assistere nella configurazione e nell'utilizzo.
