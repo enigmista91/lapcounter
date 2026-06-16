@@ -23,7 +23,7 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
   - Visualizzazione in tempo reale della distanza percorsa all'interno della scheda dell'atleta.
   - Ogni atleta ha una "scheda" dedicata cliccabile.
   - Ad ogni clic, il contatore dei giri decresce e viene registrato il tempo di passaggio.
-  - Segnalazione visiva di **Preavviso Campana** (2 giri alla fine) e automatica di **Campana** (ultimo giro) e **Arrivo** a fine gara.
+  - Segnalazione visiva di **Preavviso Campana** (sfondo arancione a 2 giri alla fine) e automatica di **Campana** (sfondo verde all'ultimo giro) e **Arrivo** a fine gara.
   - Visualizzazione in tempo reale della **Distanza Coperta** calcolata dinamicamente in base ai giri effettuati e alla lunghezza della pista.
   - Funzionalità di ritiro atleta in caso di abbandono della gara.
 - **Aggiornamento di Gruppo (Mass Update)**:
