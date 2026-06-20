@@ -30,11 +30,11 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
   - Un bottone dedicato permette di scalare contemporaneamente un giro a tutti gli atleti attivi. Perfetto per gestire gruppi compatti.
 - **Log degli Eventi**:
   - Registrazione cronologica sul display laterale/inferiore di ogni singolo passaggio, arrivo o aggiornamento collettivo, mantenendo trasparenza sull'evoluzione cronometrica.
-- **Classifica in Tempo Reale**:
-  - Modalità "Mostra Classifica" attivabile con apposito bottone a gara in corso.
+- **Classifica in Tempo Reale e Finale**:
+  - Modalità "Mostra Classifica" attivabile con apposito bottone a gara in corso o a gara conclusa.
   - Ordinamento dinamico per atleti completati, numero di giri e tempo.
   - Calcolo del distacco per atleti nello stesso giro e stato (DNS se 0 giri).
-- **Dettaglio Giri in Tempo Reale**: Visualizzazione dinamica, a gara in corso, dei tempi totali e parziali di ogni singolo giro per tutti gli atleti.
+- **Dettaglio Giri**: Visualizzazione dinamica dei tempi totali e parziali di ogni singolo giro per tutti gli atleti, sia a gara in corso che a posteriori tramite l'archivio.
 - **Condivisione e Stampa**:
   - Condivisione istantanea della classifica della gara in corso (o archiviata) via **WhatsApp** ed **Email**.
   - Funzione **Stampa Classifica** per generare un foglio pulito ed essenziale, ottimizzato per la stampa, con la classifica finale o parziale.
@@ -44,7 +44,7 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
 - **Archivio Gare e Storico**:
   - Le gare completate o interrotte vengono archiviate automaticamente.
   - Sezione dedicata per consultare lo storico delle corse passate.
-  - Possibilità di visualizzare la **Classifica Finale** e il **Dettaglio Passaggi** (tempi sul giro) per ogni singolo atleta archiviato.
+  - Possibilità di visualizzare e recuperare a posteriori la **Classifica Finale** e il **Dettaglio Passaggi** (tempi sul giro) per ogni gara ed atleta archiviato.
   - Gestione dell'archivio (eliminazione singola gara o svuotamento totale).
 - **Reset e Sicurezza**:
   - Conferme prima dell'esecuzione di azioni ad alto impatto (es. Reset totale della gara o Mass Update) per prevenire clic accidentali.
