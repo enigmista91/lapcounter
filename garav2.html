@@ -164,7 +164,7 @@
 
         .runners-grid {
             display: grid;
-            /* FIX 3: Caselle più piccole (min 100px invece di 130px) */
+            /* FIX 3: Caselle pi\xf9 piccole (min 100px invece di 130px) */
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 8px;
         }
@@ -724,6 +724,7 @@
                 <div id="main-timer">00:00.00</div>
                 <button id="btn-timer-toggle" class="btn-start" onclick="toggleTimer()">START</button>
                 <button id="btn-mobile-view" class="btn-mobile-view" onclick="toggleMobileView()">Visuale mobile</button>
+                <button id="btn-bell-toggle" class="btn-primary" onclick="toggleBell()" style="background-color: #27ae60; margin-left: 10px;">&#128276; ATTIVO</button>
             </div>
         </div>
     </header>
@@ -781,6 +782,64 @@
     <script>
         let startTime = 0, elapsedTime = 0, timerInterval = null, isRunning = false;
         let raceConfig = { runners: [], totalLaps: 0, logs: [], date: null, dist: 0, type: 0 };
+        let bellEnabled = true;
+        let lastBellTime = 0;
+        let audioCtx = null;
+
+        function toggleBell() {
+            bellEnabled = !bellEnabled;
+            const btn = document.getElementById('btn-bell-toggle');
+            if (bellEnabled) {
+                btn.innerHTML = '&#128276; ATTIVO';
+                btn.style.backgroundColor = '#27ae60';
+            } else {
+                btn.innerHTML = '&#128277; MUTO';
+                btn.style.backgroundColor = '#e74c3c';
+            }
+        }
+
+        function playBellSound() {
+            if (!bellEnabled) return;
+            const now = Date.now();
+            if (now - lastBellTime < 2000) return; // Debounce of 2 seconds
+            lastBellTime = now;
+
+            try {
+                if (!audioCtx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    audioCtx = new AudioContext();
+                }
+
+                // Resume audio context if it was suspended (e.g. by browser autoplay policy)
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                // Frequencies for a metallic bell sound
+                const frequencies = [523.25, 1046.50, 1569.75]; // C5, C6, G6
+
+                frequencies.forEach((freq, index) => {
+                    const oscillator = audioCtx.createOscillator();
+                    const gainNode = audioCtx.createGain();
+
+                    oscillator.type = 'sine';
+                    oscillator.frequency.value = freq;
+
+                    // Envelope
+                    gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0.5 / (index + 1), audioCtx.currentTime + 0.05); // Quick attack
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5 + (index * 0.2)); // Long decay
+
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+
+                    oscillator.start();
+                    oscillator.stop(audioCtx.currentTime + 2.0);
+                });
+            } catch (e) {
+                console.log("Audio not supported or disabled");
+            }
+        }
 
         function openGuideModal() {
             document.getElementById('guide-modal').classList.remove('hidden');
@@ -876,7 +935,7 @@
             // FIX 1: Arrotondamento per difetto (Math.floor) - o arrotondamento all'eccesso per i giri totali
             const calculatedLaps = Math.ceil(distInput / trackInput);
 
-            if(calculatedLaps < 1) return alert("La distanza è troppo breve per un giro!");
+            if(calculatedLaps < 1) return alert("La distanza \xe8 troppo breve per un giro!");
 
             const bibsArray = bibsInput.split(',').map(s => s.trim()).filter(s => s !== "");
 
@@ -923,11 +982,11 @@
         }
 
         function resetRace() {
-            if(confirm("Vuoi resettare tutto? Questa gara verrà archiviata (se ci sono passaggi).")) {
+            if(confirm("Vuoi resettare tutto? Questa gara verr\xe0 archiviata (se ci sono passaggi).")) {
                 clearInterval(timerInterval);
                 isRunning = false;
 
-                // Archivia la gara se c'è almeno un passaggio
+                // Archivia la gara se c'\xe8 almeno un passaggio
                 if (raceConfig && raceConfig.runners.some(r => r.lapsDone > 0)) {
                     archiveCurrentRace();
                 }
@@ -998,7 +1057,7 @@
                 return alert("Pettorale non trovato!");
             }
             if (runner.finished) {
-                return alert("Questo atleta ha già concluso la gara o è già ritirato!");
+                return alert("Questo atleta ha gi\xe0 concluso la gara o \xe8 gi\xe0 ritirato!");
             }
 
             if (confirm("Sei sicuro di voler ritirare l'atleta " + runner.id + "?")) {
@@ -1030,7 +1089,7 @@
             // Aggiorna lo stato di tutti i corridori attivi
             raceConfig.runners.forEach(runner => {
                 if (!runner.finished) {
-                    processRunnerLap(runner, currentTime, true); // true = è un aggiornamento di gruppo
+                    processRunnerLap(runner, currentTime, true); // true = \xe8 un aggiornamento di gruppo
                     updatedCount++;
                 }
             });
@@ -1074,14 +1133,17 @@
             const lapsRemaining = raceConfig.totalLaps - runner.lapsDone;
 
             let logType = 'normal';
-            if (lapsRemaining === 1) logType = 'last';
+            if (lapsRemaining === 1) {
+                logType = 'last';
+                playBellSound();
+            }
             if (lapsRemaining <= 0) {
                 runner.finished = true;
                 runner.finishTime = timeString; // Salva il tempo di arrivo per la classifica
                 logType = 'finish';
             }
 
-            // Se è un aggiornamento di gruppo, non spammiamo il log con ogni singolo atleta,
+            // Se \xe8 un aggiornamento di gruppo, non spammiamo il log con ogni singolo atleta,
             // ma registriamo comunque se qualcuno finisce o va all'ultimo giro per chiarezza
             if (!isMassUpdate || logType !== 'normal') {
                 addLogEntry(runner.id, runner.lapsDone, logType, timeString);
@@ -1227,7 +1289,7 @@
         function printLeaderboard() {
             const section = document.getElementById('leaderboard-section');
             if (section.classList.contains('hidden')) {
-                // Se non è visibile, la apriamo e la renderizziamo prima di stampare
+                // Se non \xe8 visibile, la apriamo e la renderizziamo prima di stampare
                 section.classList.remove('hidden');
                 renderLeaderboard();
             }
@@ -1563,7 +1625,7 @@
             list.appendChild(btnClearAll);
         }
 
-        // Event listener per mostrare "Gara con siepi" solo se la distanza è 2000 o 3000
+        // Event listener per mostrare "Gara con siepi" solo se la distanza \xe8 2000 o 3000
         document.getElementById('distance').addEventListener('input', function() {
             const dist = parseInt(this.value);
             const steeplechaseGroup = document.querySelector('.steeplechase-group');
