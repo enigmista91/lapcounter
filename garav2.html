@@ -724,6 +724,7 @@
                 <div id="main-timer">00:00.00</div>
                 <button id="btn-timer-toggle" class="btn-start" onclick="toggleTimer()">START</button>
                 <button id="btn-mobile-view" class="btn-mobile-view" onclick="toggleMobileView()">Visuale mobile</button>
+                <button id="btn-bell-toggle" class="btn-primary" onclick="toggleBell()" style="background-color: #27ae60; margin-left: 10px;">&#128276; ATTIVO</button>
             </div>
         </div>
     </header>
@@ -781,6 +782,64 @@
     <script>
         let startTime = 0, elapsedTime = 0, timerInterval = null, isRunning = false;
         let raceConfig = { runners: [], totalLaps: 0, logs: [], date: null, dist: 0, type: 0 };
+        let bellEnabled = true;
+        let lastBellTime = 0;
+        let audioCtx = null;
+
+        function toggleBell() {
+            bellEnabled = !bellEnabled;
+            const btn = document.getElementById('btn-bell-toggle');
+            if (bellEnabled) {
+                btn.innerHTML = '&#128276; ATTIVO';
+                btn.style.backgroundColor = '#27ae60';
+            } else {
+                btn.innerHTML = '&#128277; MUTO';
+                btn.style.backgroundColor = '#e74c3c';
+            }
+        }
+
+        function playBellSound() {
+            if (!bellEnabled) return;
+            const now = Date.now();
+            if (now - lastBellTime < 2000) return; // Debounce of 2 seconds
+            lastBellTime = now;
+
+            try {
+                if (!audioCtx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    audioCtx = new AudioContext();
+                }
+
+                // Resume audio context if it was suspended (e.g. by browser autoplay policy)
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                // Frequencies for a metallic bell sound
+                const frequencies = [523.25, 1046.50, 1569.75]; // C5, C6, G6
+
+                frequencies.forEach((freq, index) => {
+                    const oscillator = audioCtx.createOscillator();
+                    const gainNode = audioCtx.createGain();
+
+                    oscillator.type = 'sine';
+                    oscillator.frequency.value = freq;
+
+                    // Envelope
+                    gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0.5 / (index + 1), audioCtx.currentTime + 0.05); // Quick attack
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5 + (index * 0.2)); // Long decay
+
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+
+                    oscillator.start();
+                    oscillator.stop(audioCtx.currentTime + 2.0);
+                });
+            } catch (e) {
+                console.log("Audio not supported or disabled");
+            }
+        }
 
         function openGuideModal() {
             document.getElementById('guide-modal').classList.remove('hidden');
@@ -1074,7 +1133,10 @@
             const lapsRemaining = raceConfig.totalLaps - runner.lapsDone;
 
             let logType = 'normal';
-            if (lapsRemaining === 1) logType = 'last';
+            if (lapsRemaining === 1) {
+                logType = 'last';
+                playBellSound();
+            }
             if (lapsRemaining <= 0) {
                 runner.finished = true;
                 runner.finishTime = timeString; // Salva il tempo di arrivo per la classifica
