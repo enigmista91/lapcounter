@@ -815,26 +815,33 @@
                     audioCtx.resume();
                 }
 
-                // Frequencies for a metallic bell sound
-                const frequencies = [523.25, 1046.50, 1569.75]; // C5, C6, G6
+                // Frequencies for a more realistic bronze track bell
+                const fundamental = 800; // Hz
+                const overtones = [
+                    { ratio: 1, gain: 1, decay: 2.5 },
+                    { ratio: 2.1, gain: 0.6, decay: 1.5 },
+                    { ratio: 3.4, gain: 0.4, decay: 1.0 },
+                    { ratio: 4.8, gain: 0.2, decay: 0.5 },
+                    { ratio: 6.2, gain: 0.1, decay: 0.3 }
+                ];
 
-                frequencies.forEach((freq, index) => {
+                overtones.forEach(overtone => {
                     const oscillator = audioCtx.createOscillator();
                     const gainNode = audioCtx.createGain();
 
                     oscillator.type = 'sine';
-                    oscillator.frequency.value = freq;
+                    oscillator.frequency.value = fundamental * overtone.ratio;
 
-                    // Envelope
+                    // Envelope for realistic percussive strike and long ring
                     gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-                    gainNode.gain.linearRampToValueAtTime(0.5 / (index + 1), audioCtx.currentTime + 0.05); // Quick attack
-                    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5 + (index * 0.2)); // Long decay
+                    gainNode.gain.linearRampToValueAtTime(overtone.gain, audioCtx.currentTime + 0.02); // Fast, sharp attack
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + overtone.decay);
 
                     oscillator.connect(gainNode);
                     gainNode.connect(audioCtx.destination);
 
                     oscillator.start();
-                    oscillator.stop(audioCtx.currentTime + 2.0);
+                    oscillator.stop(audioCtx.currentTime + overtone.decay);
                 });
             } catch (e) {
                 console.log("Audio not supported or disabled");
