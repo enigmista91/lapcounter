@@ -781,6 +781,13 @@
 
     <script>
         let startTime = 0, elapsedTime = 0, timerInterval = null, isRunning = false;
+        function updateTimer() {
+            if (!isRunning) return;
+            elapsedTime = Date.now() - startTime;
+            document.getElementById('main-timer').textContent = formatTime(elapsedTime);
+            timerInterval = requestAnimationFrame(updateTimer);
+        }
+
         let raceConfig = { runners: [], totalLaps: 0, logs: [], date: null, dist: 0, type: 0 };
         let bellEnabled = true;
         let lastBellTime = 0;
@@ -897,16 +904,13 @@
             if (!isRunning) {
                 isRunning = true;
                 startTime = Date.now() - elapsedTime;
-                timerInterval = setInterval(() => {
-                    elapsedTime = Date.now() - startTime;
-                    document.getElementById('main-timer').textContent = formatTime(elapsedTime);
-                }, 37);
+                timerInterval = requestAnimationFrame(updateTimer);
                 btn.textContent = "STOP";
                 btn.className = "btn-stop";
                 document.querySelectorAll('.runner-card').forEach(c => c.classList.remove('disabled'));
             } else {
                 isRunning = false;
-                clearInterval(timerInterval);
+                cancelAnimationFrame(timerInterval);
                 btn.textContent = "RIPRENDI";
                 btn.className = "btn-start";
             }
@@ -990,7 +994,7 @@
 
         function resetRace() {
             if(confirm("Vuoi resettare tutto? Questa gara verrà archiviata (se ci sono passaggi).")) {
-                clearInterval(timerInterval);
+                cancelAnimationFrame(timerInterval);
                 isRunning = false;
 
                 // Archivia la gara se c'è almeno un passaggio
@@ -1493,10 +1497,7 @@
                 // If it was running, the startTime in state is the absolute time it started!
                 // elapsedTime is recalculated from that startTime.
                 // elapsedTime = Date.now() - startTime;  // This is correct.
-                timerInterval = setInterval(() => {
-                    elapsedTime = Date.now() - startTime;
-                    document.getElementById('main-timer').textContent = formatTime(elapsedTime);
-                }, 37);
+                timerInterval = requestAnimationFrame(updateTimer);
                 document.getElementById('btn-timer-toggle').textContent = "STOP";
                 document.getElementById('btn-timer-toggle').className = "btn-stop";
             } else {
