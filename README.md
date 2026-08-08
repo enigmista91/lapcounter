@@ -24,6 +24,7 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
   - Ogni atleta ha una "scheda" dedicata cliccabile.
   - Ad ogni clic, il contatore dei giri decresce e viene registrato il tempo di passaggio.
   - Segnalazione visiva di **Preavviso Campana** (animazione arancione lampeggiante a 2 giri dalla fine) e automatica di **Campana** (scheda rossa all'ultimo giro) e **Arrivo** a fine gara.
+  - Riproduzione automatica di un **Suono di Campana** (sintetizzato tramite Web Audio API) all'ingresso dell'ultimo giro per ogni atleta.
   - Visualizzazione in tempo reale della **Distanza Coperta** calcolata dinamicamente in base ai giri effettuati e alla lunghezza della pista.
   - Funzionalità di ritiro atleta in caso di abbandono della gara.
 - **Aggiornamento di Gruppo (Mass Update)**:
