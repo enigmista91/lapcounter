@@ -18,12 +18,12 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
   - Calcolo automatico del numero di giri/passaggi previsti.
   - Inserimento opzionale di Data Gara, Ora e Nome del Meeting per una migliore archiviazione.
   - Guida all'uso integrata per assistere nella configurazione e nell'utilizzo.
-- **Cronometro Integrato**: Display in tempo reale (`MM:SS.ms`) del tempo trascorso dall'inizio della gara.
+- **Cronometro Integrato**: Display in tempo reale (`MM:SS.ms`) del tempo trascorso dall'inizio della gara. Ottimizzato tramite `requestAnimationFrame` per garantire alte prestazioni e consumi ridotti, ideale per dispositivi mobili e tabelloni.
 - **Gestione Atleti (Individuale)**:
   - Visualizzazione in tempo reale della distanza percorsa all'interno della scheda dell'atleta.
   - Ogni atleta ha una "scheda" dedicata cliccabile.
   - Ad ogni clic, il contatore dei giri decresce e viene registrato il tempo di passaggio.
-  - Segnalazione visiva di **Preavviso Campana** (animazione arancione lampeggiante a 2 giri dalla fine) e automatica di **Campana** (scheda rossa all'ultimo giro) e **Arrivo** a fine gara.
+  - Segnalazione visiva di **Preavviso Campana** (animazione arancione lampeggiante a 2 giri dalla fine) e automatica di **Campana** (scheda rossa all'ultimo giro) e **Arrivo** a fine gara. Include un avviso sonoro realistico della campana per l'ultimo giro, generato tramite Web Audio API (con apposito pulsante di attivazione/disattivazione).
   - Visualizzazione in tempo reale della **Distanza Coperta** calcolata dinamicamente in base ai giri effettuati e alla lunghezza della pista.
   - Funzionalità di ritiro atleta in caso di abbandono della gara.
 - **Aggiornamento di Gruppo (Mass Update)**:
