@@ -36,6 +36,7 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
   - Calcolo del distacco per atleti nello stesso giro e stato (DNS se 0 giri).
 - **Dettaglio Giri**: Visualizzazione dinamica dei tempi totali e parziali di ogni singolo giro per tutti gli atleti, sia a gara in corso che a posteriori tramite l'archivio.
 - **Condivisione e Stampa**:
+  - Generazione di un **QR Code** con i risultati della gara, facilmente scansionabile per condividere la classifica al volo.
   - Condivisione istantanea della classifica della gara in corso (o archiviata) via **WhatsApp** ed **Email**.
   - Funzione **Stampa Classifica** per generare un foglio pulito ed essenziale, ottimizzato per la stampa, con la classifica finale o parziale.
 - **Salvataggio di Sicurezza (Local Storage)**:
