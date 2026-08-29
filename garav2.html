@@ -99,7 +99,28 @@
             margin-left: 10px;
         }
 
-        .btn-whatsapp {
+                .btn-qr {
+            background-color: #34495e;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        #qrcode-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+.btn-whatsapp {
             background-color: #25D366;
             color: white;
             border: none;
@@ -613,10 +634,28 @@
             border-radius: 0 0 8px 8px;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
-    <!-- Modal Guida all'uso -->
+        <!-- Modal QR Code -->
+    <div id="qr-modal" class="modal-overlay hidden" style="z-index: 2000;">
+        <div class="modal-content" style="text-align: center; max-width: 400px;">
+            <div class="modal-header">
+                <h2>Risultati Gara</h2>
+                <span class="modal-close" onclick="closeQRModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Inquadra il QR code per leggere la classifica</p>
+                <div id="qrcode-container"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="closeQRModal()">Chiudi</button>
+            </div>
+        </div>
+    </div>
+
+<!-- Modal Guida all'uso -->
     <div id="guide-modal" class="modal-overlay hidden" onclick="closeGuideModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
@@ -713,6 +752,7 @@
                 <button class="btn-edit" onclick="resetRace()">Reset</button>
                 <button class="btn-group-action" onclick="massLapUpdate()">Tutti -1 Giro</button>
                 <button class="btn-stop" onclick="withdrawRunner()" style="margin-left: 10px; font-size: 0.8rem; padding: 4px 8px; min-width: auto; background-color: #e74c3c; color: white;">Ritira Atleta</button>
+                <button class="btn-qr" onclick="generateQRCode()">QR Code</button>
                 <button class="btn-whatsapp" onclick="shareToWhatsApp()">Condividi su WhatsApp</button>
                 <button class="btn-email" onclick="shareToEmail()">Invia via Email</button>
                 <button class="btn-print" onclick="printLeaderboard()">Stampa Classifica</button>
@@ -1212,7 +1252,71 @@
             list.insertBefore(li, list.firstChild);
         }
 
-        function shareToWhatsApp() {
+                function generateQRCode() {
+            if (!raceConfig || !raceConfig.runners || raceConfig.runners.length === 0) {
+                alert("Nessuna gara attiva da condividere!");
+                return;
+            }
+
+            const distInput = document.getElementById('distance').value;
+            let message = `Classifica Gara ${distInput}m\n\n`;
+
+            const finishedRunners = raceConfig.runners.filter(r => r.finished);
+            const activeRunners = raceConfig.runners.filter(r => !r.finished);
+
+            finishedRunners.sort((a, b) => {
+                if (a.finishTime < b.finishTime) return -1;
+                if (a.finishTime > b.finishTime) return 1;
+                return 0;
+            });
+
+            if (finishedRunners.length > 0) {
+                message += `ARRIVATI:\n`;
+                finishedRunners.forEach((r, index) => {
+                    message += `${index + 1} - Pettorale ${r.id}: ${r.finishTime}\n`;
+                });
+                message += `\n`;
+            }
+
+            if (activeRunners.length > 0) {
+                activeRunners.sort((a, b) => b.lapsDone - a.lapsDone);
+
+                message += `IN GARA:\n`;
+                activeRunners.forEach(r => {
+                    const lapsRemaining = raceConfig.totalLaps - r.lapsDone;
+                    message += `- Pettorale ${r.id}: mancano ${lapsRemaining} giri\n`;
+                });
+            }
+
+            message += `\nGenerato dal Contagiri.`;
+
+            // Clear previous QR code
+            document.getElementById('qrcode-container').innerHTML = '';
+
+            try {
+                // Generate new QR code
+                new QRCode(document.getElementById("qrcode-container"), {
+                    text: message,
+                    width: 256,
+                    height: 256,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.L
+                });
+
+                // Show modal
+                document.getElementById('qr-modal').classList.remove('hidden');
+            } catch (e) {
+                console.error("Errore generazione QR:", e);
+                alert("Errore durante la generazione del QR code. Il testo potrebbe essere troppo lungo.");
+            }
+        }
+
+        function closeQRModal() {
+            document.getElementById('qr-modal').classList.add('hidden');
+        }
+
+function shareToWhatsApp() {
             if (!raceConfig || !raceConfig.runners || raceConfig.runners.length === 0) {
                 alert("Nessuna gara attiva da condividere!");
                 return;
