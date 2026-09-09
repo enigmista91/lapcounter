@@ -23,7 +23,7 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
   - Visualizzazione in tempo reale della distanza percorsa all'interno della scheda dell'atleta.
   - Ogni atleta ha una "scheda" dedicata cliccabile.
   - Ad ogni clic, il contatore dei giri decresce e viene registrato il tempo di passaggio.
-  - Segnalazione visiva di **Preavviso Campana** (animazione arancione lampeggiante a 2 giri dalla fine) e automatica di **Campana** (scheda rossa e **Avviso sonoro tramite Web Audio API** all'ultimo giro) e **Arrivo** a fine gara.
+  - Segnalazione visiva di **Preavviso Campana** (animazione arancione lampeggiante a 2 giri dalla fine) e automatica di **Campana** (scheda rossa e **Avviso sonoro tramite Web Audio API** all'ultimo giro, con apposito tasto per attivare/disattivare l'audio) e **Arrivo** a fine gara.
   - Visualizzazione in tempo reale della **Distanza Coperta** calcolata dinamicamente in base ai giri effettuati e alla lunghezza della pista.
   - Funzionalità di ritiro atleta in caso di abbandono della gara.
 - **Aggiornamento di Gruppo (Mass Update)**:
@@ -33,7 +33,7 @@ L'interfaccia intuitiva consente a giudici o allenatori di monitorare più atlet
 - **Classifica in Tempo Reale e Finale**:
   - Modalità "Mostra Classifica" attivabile con apposito bottone a gara in corso o a gara conclusa.
   - Ordinamento dinamico per atleti completati, numero di giri e tempo.
-  - Calcolo del distacco per atleti nello stesso giro e stato (DNS se 0 giri).
+  - Calcolo del distacco per atleti nello stesso giro e stato (DNS se 0 giri, DNF per atleti ritirati).
 - **Dettaglio Giri**: Visualizzazione dinamica dei tempi totali e parziali di ogni singolo giro per tutti gli atleti, sia a gara in corso che a posteriori tramite l'archivio.
 - **Condivisione e Stampa**:
   - Generazione di un **QR Code** con i risultati della gara, facilmente scansionabile per condividere la classifica al volo.
